@@ -1,0 +1,33 @@
+# Build with NMAKE
+IGNORED_WARNINGS = /wd4201 /wd4820 /wd4204
+CFLAGS = /nologo /Wall /I../include $(IGNORED_WARNINGS)
+
+all:
+	cl /DTEST_MODULAR /Fetest $(CFLAGS) /TC test.c
+	cl /DTEST_ATOMIC /Fetest $(CFLAGS) /TC test.c
+	cl /DTEST_DBGHELP /Fetest $(CFLAGS) /TC test.c
+	cl /DTEST_DDS /Fetest $(CFLAGS) /TC test.c
+	cl /DTEST_FILE /Fetest $(CFLAGS) /TC test.c
+	cl /DTEST_GDI /Fetest $(CFLAGS) /TC test.c
+	cl /DTEST_IO /Fetest $(CFLAGS) /TC test.c
+	cl /DTEST_MISC /Fetest $(CFLAGS) /TC test.c
+	cl /DTEST_PROCESS /Fetest $(CFLAGS) /TC test.c
+	cl /DTEST_SYSINFO /Fetest $(CFLAGS) /TC test.c
+	cl /DTEST_THREADS /Fetest $(CFLAGS) /TC test.c
+	cl /DTEST_WINDOW /Fetest $(CFLAGS) /TC test.c
+	cl /DTEST_MODULAR /Fetest $(CFLAGS) /TP test.c
+	cl /DTEST_ATOMIC /Fetest $(CFLAGS) /TP test.c
+	cl /DTEST_DBGHELP /Fetest $(CFLAGS) /TP test.c
+	cl /DTEST_DDS /Fetest $(CFLAGS) /TP test.c
+	cl /DTEST_FILE /Fetest $(CFLAGS) /TP test.c
+	cl /DTEST_GDI /Fetest $(CFLAGS) /TP test.c
+	cl /DTEST_IO /Fetest $(CFLAGS) /TP test.c
+	cl /DTEST_MISC /Fetest $(CFLAGS) /TP test.c
+	cl /DTEST_PROCESS /Fetest $(CFLAGS) /TP test.c
+	cl /DTEST_SYSINFO /Fetest $(CFLAGS) /TP test.c
+	cl /DTEST_THREADS /Fetest $(CFLAGS) /TP test.c
+	cl /DTEST_WINDOW /Fetest $(CFLAGS) /TP test.c
+
+clean:
+	rm test.obj test.exe
+

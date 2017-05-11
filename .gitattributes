@@ -1,0 +1,7 @@
+# Github language settings
+*.h linguist-language=c
+*.c linguist-language=c
+
+# Default behaviour, in case people don't have core.autocrlf set.
+* text=auto
+
