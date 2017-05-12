@@ -1,27 +1,27 @@
 #if defined(TEST_MODULAR)
-#include <windows_modular.h>
+#include <win32/windows_modular.h>
 #elif defined(TEST_ATOMIC)
-#include <atomic.h>
+#include <win32/atomic.h>
 #elif defined(TEST_DBGHELP)
-#include "dbghelp.h"
+#include <win32/dbghelp.h>
 #elif defined(TEST_DDS)
-#include "dds.h"
+#include <win32/dds.h>
 #elif defined(TEST_FILE)
-#include "file.h"
+#include <win32/file.h>
 #elif defined(TEST_GDI)
-#include "gdi.h"
+#include <win32/gdi.h>
 #elif defined(TEST_IO)
-#include "io.h"
+#include <win32/io.h>
 #elif defined(TEST_MISC)
-#include "misc.h"
+#include <win32/misc.h>
 #elif defined(TEST_PROCESS)
-#include "process.h"
+#include <win32/process.h>
 #elif defined(TEST_SYSINFO)
-#include "sysinfo.h"
+#include <win32/sysinfo.h>
 #elif defined(TEST_THREADS)
-#include "threads.h"
+#include <win32/threads.h>
 #elif defined(TEST_WINDOW)
-#include "window.h"
+#include <win32/window.h>
 #endif
 
 
