@@ -56,5 +56,5 @@ Requires `CL.EXE` and `NMAKE.EXE` in your path.
 
 ## License
 
-This project is licensed under the "Unlicense" license.
+This project is dual-licensed under the "MIT" & "Unlicense" license.
 
