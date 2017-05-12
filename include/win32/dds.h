@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Copyright (c) Arvid Gerstmann. All rights reserved.
+ */
 #ifndef WINDOWS_DDS_H
 #define WINDOWS_DDS_H
 

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Copyright (c) Arvid Gerstmann. All rights reserved.
+ */
 #ifndef WINDOWS_DBGHELP_H
 #define WINDOWS_DBGHELP_H
 

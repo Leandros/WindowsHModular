@@ -1,4 +1,9 @@
 /*
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Copyright (c) Arvid Gerstmann. All rights reserved.
+ */
+
+/*
  * This are the macros from the original windows.h.
  * Defining them will prevent inclusion of this enormous header file.
  */

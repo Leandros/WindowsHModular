@@ -82,5 +82,8 @@ Requires `CL.EXE` and `NMAKE.EXE` in your path.
 
 ## License
 
-This project is dual-licensed under the "MIT" & "Unlicense" license.
+This project contains parts of the Microsoft Windows SDK.
+They're licensed under Microsofts EULA. To use it you must read and agree to it.
+
+The rest is dual-licensed under the "MIT" & "Unlicense" license.
 
