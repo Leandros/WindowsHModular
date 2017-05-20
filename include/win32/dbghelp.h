@@ -524,6 +524,8 @@ BOOL WINAPI SymGetSearchPathW(
         LPWSTR          SearchPath,
         DWORD           SearchPathLength);
 
+BOOL WINAPI SymCleanup(
+        HANDLE          hProcess);
 
 /* ========================================================================== */
 /* Exceptions: */
@@ -538,6 +540,8 @@ USHORT WINAPI RtlCaptureStackBackTrace(
         ULONG       FramesToCapture,
         PVOID *     BackTrace,
         PULONG      BackTraceHash);
+void WINAPI RtlCaptureContext(
+        PCONTEXT    ContextRecord);
 void WINAPI RaiseException(
         DWORD       dwExceptionCode,
         DWORD       dwExceptionFlags,

@@ -280,6 +280,18 @@ typedef union _LARGE_INTEGER {
     LONGLONG QuadPart;
 } LARGE_INTEGER, *PLARGE_INTEGER;
 
+typedef union _ULARGE_INTEGER {
+    struct {
+        DWORD LowPart;
+        DWORD HighPart;
+    };
+    struct {
+        DWORD LowPart;
+        DWORD HighPart;
+    } u;
+    ULONGLONG QuadPart;
+} ULARGE_INTEGER, *PULARGE_INTEGER;
+
 /* Filetime: */
 typedef struct _FILETIME {
     DWORD dwLowDateTime;
