@@ -1,3 +1,6 @@
 # CTags
 tags
 tags.temp
+
+# Generated Files
+include/win32/windows.h
