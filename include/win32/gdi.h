@@ -5,7 +5,9 @@
 #ifndef WINDOWS_GDI_H
 #define WINDOWS_GDI_H
 
+#ifndef WINDOWS_BASE_H
 #include "windows_base.h"
+#endif
 #if defined(__cplusplus)
 extern "C" {
 #endif

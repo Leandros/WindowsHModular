@@ -5,7 +5,9 @@
 #ifndef WINDOWS_DBGHELP_H
 #define WINDOWS_DBGHELP_H
 
+#ifndef WINDOWS_BASE_H
 #include "windows_base.h"
+#endif
 #if defined(__cplusplus)
 extern "C" {
 #endif
