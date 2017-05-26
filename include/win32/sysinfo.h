@@ -13,14 +13,14 @@ extern "C" {
 #endif
 
 /* Display Devices: */
-#define DISPLAY_DEVICE_ACTIVE           0x00000001
-#define DISPLAY_DEVICE_ATTACHED         0x00000002
-#define DISPLAY_DEVICE_PRIMARY_DEVICE   0x00000004
+#define DISPLAY_DEVICE_ACTIVE               0x00000001
+#define DISPLAY_DEVICE_ATTACHED             0x00000002
+#define DISPLAY_DEVICE_PRIMARY_DEVICE       0x00000004
 
 /* System Metrics */
-#define SM_CXSCREEN                     0
-#define SM_CYSCREEN                     1
-#define SM_CMONITORS                    80
+#define SM_CXSCREEN                         0
+#define SM_CYSCREEN                         1
+#define SM_CMONITORS                        80
 
 /* Versions */
 #define VER_EQUAL                           1
@@ -46,6 +46,68 @@ extern "C" {
 #define VER_PLATFORMID                      0x0000008
 #define VER_SERVICEPACKMINOR                0x0000010
 #define VER_SERVICEPACKMAJOR                0x0000020
+
+/* Registry Key Classes */
+#define HKEY_CLASSES_ROOT                   ((HKEY)(ULONG_PTR)((LONG)0x80000000))
+#define HKEY_CURRENT_USER                   ((HKEY)(ULONG_PTR)((LONG)0x80000001))
+#define HKEY_LOCAL_MACHINE                  ((HKEY)(ULONG_PTR)((LONG)0x80000002))
+#define HKEY_USERS                          ((HKEY)(ULONG_PTR)((LONG)0x80000003))
+
+/* Registry Types */
+#define REG_NONE                            0
+#define REG_SZ                              1
+#define REG_EXPAND_SZ                       2
+
+#define REG_BINARY                          3
+#define REG_DWORD                           4
+#define REG_DWORD_LITTLE_ENDIAN             4
+#define REG_DWORD_BIG_ENDIAN                5
+#define REG_LINK                            6
+#define REG_MULTI_SZ                        7
+#define REG_RESOURCE_LIST                   8
+#define REG_FULL_RESOURCE_DESCRIPTOR        9
+#define REG_RESOURCE_REQUIREMENTS_LIST      10
+#define REG_QWORD                           11
+#define REG_QWORD_LITTLE_ENDIAN             11
+
+
+/* Registry Access Rights */
+#define KEY_QUERY_VALUE                     0x0001
+#define KEY_SET_VALUE                       0x0002
+#define KEY_CREATE_SUB_KEY                  0x0004
+#define KEY_ENUMERATE_SUB_KEYS              0x0008
+#define KEY_NOTIFY                          0x0010
+#define KEY_CREATE_LINK                     0x0020
+#define KEY_WOW64_32KEY                     0x0200
+#define KEY_WOW64_64KEY                     0x0100
+#define KEY_WOW64_RES                       0x0300
+
+#define KEY_READ                            \
+    ((STANDARD_RIGHTS_READ                  \
+      | KEY_QUERY_VALUE                     \
+      | KEY_ENUMERATE_SUB_KEYS              \
+      | KEY_NOTIFY)                         \
+        & (~SYNCHRONIZE))
+
+#define KEY_WRITE                           \
+    ((STANDARD_RIGHTS_WRITE                 \
+      | KEY_SET_VALUE                       \
+      | KEY_CREATE_SUB_KEY)                 \
+        & (~SYNCHRONIZE))
+
+#define KEY_EXECUTE                         \
+    ((KEY_READ)                             \
+        & (~SYNCHRONIZE))
+
+#define KEY_ALL_ACCESS                      \
+    ((STANDARD_RIGHTS_ALL                   \
+      | KEY_QUERY_VALUE                     \
+      | KEY_SET_VALUE                       \
+      | KEY_CREATE_SUB_KEY                  \
+      | KEY_ENUMERATE_SUB_KEYS              \
+      | KEY_NOTIFY                          \
+      | KEY_CREATE_LINK)                    \
+        & (~SYNCHRONIZE))
 
 
 /* ========================================================================== */
@@ -384,6 +446,58 @@ BOOL WINAPI EnumDisplayDevicesW(
         PDISPLAY_DEVICEW lpDisplayDevice,
         DWORD   dwFlags);
 
+/* ========================================================================== */
+/* Registry: */
+LONG WINAPI RegOpenKeyExA(
+    HKEY    hKey,
+    LPCSTR  lpSubKey,
+    DWORD   ulOptions,
+    REGSAM  samDesired,
+    PHKEY   phkResult);
+LONG WINAPI RegOpenKeyExW(
+    HKEY    hKey,
+    LPCWSTR lpSubKey,
+    DWORD   ulOptions,
+    REGSAM  samDesired,
+    PHKEY   phkResult);
+LONG WINAPI RegQueryValueExA(
+    HKEY    hKey,
+    LPCSTR  lpValueName,
+    LPDWORD lpReserved,
+    LPDWORD lpType,
+    LPBYTE  lpData,
+    LPDWORD lpcbData);
+LONG WINAPI RegQueryValueExW(
+    HKEY    hKey,
+    LPCWSTR lpValueName,
+    LPDWORD lpReserved,
+    LPDWORD lpType,
+    LPBYTE  lpData,
+    LPDWORD lpcbData);
+LONG WINAPI RegCreateKeyExA(
+    HKEY                  hKey,
+    LPCSTR                lpSubKey,
+    DWORD                 Reserved,
+    LPSTR                 lpClass,
+    DWORD                 dwOptions,
+    REGSAM                samDesired,
+    LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+    PHKEY                 phkResult,
+    LPDWORD               lpdwDisposition);
+LONG WINAPI RegCreateKeyExW(
+    HKEY                  hKey,
+    LPCWSTR               lpSubKey,
+    DWORD                 Reserved,
+    LPWSTR                lpClass,
+    DWORD                 dwOptions,
+    REGSAM                samDesired,
+    LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+    PHKEY                 phkResult,
+    LPDWORD               lpdwDisposition);
+LONG WINAPI RegCloseKey(
+    HKEY hKey);
+LONG WINAPI RegFlushKey(
+    HKEY hKey);
 
 #if defined(__cplusplus)
 }

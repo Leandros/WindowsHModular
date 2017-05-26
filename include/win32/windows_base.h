@@ -242,11 +242,17 @@ typedef UINT_PTR            WPARAM;
 
 typedef void *              HGDIOBJ;
 
+typedef HANDLE              HKEY;
+typedef HKEY *              PHKEY;
+typedef ACCESS_MASK         REGSAM;
+
 
 /* ========================================================================== */
 /* Errors: */
 /* ========================================================================== */
-#define ERROR_NO_MORE_FILES     18
+#define ERROR_SUCCESS           0L
+#define ERROR_NO_MORE_FILES     18L
+#define ERROR_MORE_DATA         234L
 
 
 /* ========================================================================== */
