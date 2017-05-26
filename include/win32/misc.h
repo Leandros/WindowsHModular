@@ -64,6 +64,7 @@ typedef PTIME_ZONE_INFORMATION LPTIME_ZONE_INFORMATION;
  * I could've implemented them in assembly, they're like 4 lines, but this is
  * avoiding the cost of a function call, if optimizations are turned on.
  */
+#ifdef WIN32_BYTESWAP_MACROS
 #define _byteswap_ulong(x)      (((unsigned long)(x) << 24) | \
                                 (((unsigned long)(x) << 8) & 0xff0000) | \
                                 (((unsigned long)(x) >> 8) & 0xff00) | \
@@ -76,10 +77,17 @@ typedef PTIME_ZONE_INFORMATION LPTIME_ZONE_INFORMATION;
                                 (((unsigned __int64)(x) >> 24) & 0xff0000ULL) | \
                                 (((unsigned __int64)(x) >> 40) & 0xff00ULL) | \
                                 ((unsigned __int64)(x)  >> 56))
+#else
+unsigned short   __cdecl _byteswap_ushort(unsigned short   Number);
+unsigned long    __cdecl _byteswap_ulong (unsigned long    Number);
+unsigned __int64 __cdecl _byteswap_uint64(unsigned __int64 Number);
+#endif
+
 unsigned int _rotl(unsigned int value, int shift);
 unsigned __int64 _rotl64(unsigned __int64 value, int shift);
 unsigned char _BitScanForward(unsigned long * Index, unsigned long Mask);
 unsigned char _BitScanForward64(unsigned long * Index, unsigned __int64 Mask);
+
 
 /* ========================================================================== */
 /* UTF-16 <-> UTF-8 conversion Functions: */
