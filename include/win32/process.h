@@ -49,6 +49,24 @@ extern "C" {
 #define SE_PRIVILEGE_REMOVED            (0X00000004L)
 #define SE_PRIVILEGE_USED_FOR_ACCESS    (0x80000000L)
 
+/* Status */
+#define STATUS_WAIT_0                   ((DWORD)0x00000000L)
+#define STATUS_TIMEOUT                  ((DWORD)0x00000102L)
+#define STATUS_PENDING                  ((DWORD)0x00000103L)
+#define STILL_ACTIVE                    STATUS_PENDING
+
+/* Startupinfo */
+#define STARTF_USESHOWWINDOW            0x00000001
+#define STARTF_USESIZE                  0x00000002
+#define STARTF_USEPOSITION              0x00000004
+#define STARTF_USECOUNTCHARS            0x00000008
+#define STARTF_USEFILLATTRIBUTE         0x00000010
+#define STARTF_RUNFULLSCREEN            0x00000020
+#define STARTF_FORCEONFEEDBACK          0x00000040
+#define STARTF_FORCEOFFFEEDBACK         0x00000080
+#define STARTF_USESTDHANDLES            0x00000100
+
+
 /* Priority Classes / CreateProcess: */
 #define NORMAL_PRIORITY_CLASS       0x00000020
 
@@ -214,6 +232,12 @@ BOOL WINAPI EnumProcessModules(
         HMODULE * lphModule,
         DWORD   cb,
         LPDWORD lpcbNeeded);
+DWORD WINAPI WaitForInputIdle(
+        HANDLE hProcess,
+        DWORD  dwMilliseconds);
+BOOL WINAPI GetExitCodeProcess(
+        HANDLE  hProcess,
+        LPDWORD lpExitCode);
 
 /* ========================================================================== */
 /* Jobs: */

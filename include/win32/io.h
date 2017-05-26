@@ -19,6 +19,9 @@ extern "C" {
 #define INVALID_HANDLE_VALUE    ((HANDLE)(LONG_PTR)-1)
 #define ATTACH_PARENT_PROCESS   ((DWORD)-1)
 
+#define HANDLE_FLAG_INHERIT             0x00000001
+#define HANDLE_FLAG_PROTECT_FROM_CLOSE  0x00000002
+
 /* Console Colors: */
 #define FOREGROUND_BLUE         0x0001
 #define FOREGROUND_GREEN        0x0002
@@ -150,6 +153,10 @@ BOOL WINAPI SetConsoleTextAttribute(
         WORD wAttributes);
 BOOL WINAPI CloseHandle(
         HANDLE hObject);
+BOOL WINAPI SetHandleInformation(
+        HANDLE hObject,
+        DWORD  dwMask,
+        DWORD  dwFlags);
 
 LPSTR WINAPI GetCommandLineA(void);
 LPWSTR WINAPI GetCommandLineW(void);
@@ -181,6 +188,9 @@ BOOL WINAPI SetConsoleCtrlHandler(
         PHANDLER_ROUTINE HandlerRoutine,
         BOOL Add);
 HWND WINAPI GetConsoleWindow(void);
+BOOL WINAPI SetConsoleOutputCP(
+    UINT wCodePageID);
+UINT WINAPI GetConsoleOutputCP(void);
 
 /* ========================================================================== */
 /* Heap Functions: */
@@ -216,6 +226,21 @@ BOOL WINAPI VirtualFree(
         LPVOID lpAddress,
         SIZE_T dwSize,
         DWORD dwFreeType);
+
+/* ========================================================================== */
+/* Pipe Functions: */
+BOOL WINAPI CreatePipe(
+        PHANDLE hReadPipe,
+        PHANDLE hWritePipe,
+        LPSECURITY_ATTRIBUTES lpPipeAttributes,
+        DWORD nSize);
+BOOL WINAPI PeekNamedPipe(
+        HANDLE  hNamedPipe,
+        LPVOID  lpBuffer,
+        DWORD   nBufferSize,
+        LPDWORD lpBytesRead,
+        LPDWORD lpTotalBytesAvail,
+        LPDWORD lpBytesLeftThisMessage);
 
 
 #if defined(__cplusplus)

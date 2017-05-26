@@ -198,6 +198,11 @@ PROC WINAPI wglGetProcAddress(
 BOOL WINAPI FreeLibrary(
         HMODULE hModule);
 
+/* ========================================================================== */
+/* Libc Replacements: */
+PVOID SecureZeroMemory(
+        PVOID  ptr,
+        SIZE_T cnt);
 
 #if defined(__cplusplus)
 }

@@ -112,18 +112,18 @@ extern "C" {
      SECTION_MAP_EXECUTE |\
      SECTION_EXTEND_SIZE)
 
-#define FILE_MAP_COPY               SECTION_QUERY
-#define FILE_MAP_WRITE              SECTION_MAP_WRITE
-#define FILE_MAP_READ               SECTION_MAP_READ
-#define FILE_MAP_ALL_ACCESS         SECTION_ALL_ACCESS
-#define FILE_MAP_EXECUTE            SECTION_MAP_EXECUTE_EXPLICIT
+#define FILE_MAP_COPY                   SECTION_QUERY
+#define FILE_MAP_WRITE                  SECTION_MAP_WRITE
+#define FILE_MAP_READ                   SECTION_MAP_READ
+#define FILE_MAP_ALL_ACCESS             SECTION_ALL_ACCESS
+#define FILE_MAP_EXECUTE                SECTION_MAP_EXECUTE_EXPLICIT
 
-#define PAGE_EXECUTE_READ           0x20
-#define PAGE_EXECUTE_READWRITE      0x40
-#define PAGE_EXECUTE_WRITECOPY      0x80
-#define PAGE_READONLY               0x02
-#define PAGE_READWRITE              0x04
-#define PAGE_WRITECOPY              0x08
+#define PAGE_EXECUTE_READ               0x20
+#define PAGE_EXECUTE_READWRITE          0x40
+#define PAGE_EXECUTE_WRITECOPY          0x80
+#define PAGE_READONLY                   0x02
+#define PAGE_READWRITE                  0x04
+#define PAGE_WRITECOPY                  0x08
 
 /* File Change Notifications: */
 #define FILE_NOTIFY_CHANGE_FILE_NAME    0x00000001
@@ -132,6 +132,13 @@ extern "C" {
 #define FILE_NOTIFY_CHANGE_SIZE         0x00000008
 #define FILE_NOTIFY_CHANGE_LAST_WRITE   0x00000010
 #define FILE_NOTIFY_CHANGE_SECURITY     0x00000100
+
+/* File Type: */
+#define FILE_TYPE_UNKNOWN               0x0000
+#define FILE_TYPE_DISK                  0x0001
+#define FILE_TYPE_CHAR                  0x0002
+#define FILE_TYPE_PIPE                  0x0003
+#define FILE_TYPE_REMOTE                0x8000
 
 
 /* ========================================================================== */
@@ -350,6 +357,10 @@ BOOL WINAPI FindNextChangeNotification(
 BOOL WINAPI FindCloseChangeNotification(
         HANDLE  hChangeHandle);
 
+/* ========================================================================== */
+/* File Misc: */
+DWORD WINAPI GetFileType(
+        HANDLE hFile);
 
 #if defined(__cplusplus)
 }
