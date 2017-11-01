@@ -132,6 +132,29 @@
 /* Basic Types: */
 /* https://msdn.microsoft.com/en-us/library/windows/desktop/aa383751(v=vs.85).aspx */
 /* ========================================================================== */
+
+#if defined(_MSC_VER)
+#if _MSC_VER < 1300
+typedef signed char int8_t;
+typedef unsigned char uint8_t;
+typedef signed short int16_t;
+typedef unsigned short uint16_t;
+typedef signed int int32_t;
+typedef unsigned int uint32_t;
+#else
+typedef signed __int8 int8_t;
+typedef unsigned __int8 uint8_t;
+typedef signed __int16 int16_t;
+typedef unsigned __int16 uint16_t;
+typedef signed __int32 int32_t;
+typedef unsigned __int32 uint32_t;
+#endif
+typedef signed __int64 int64_t;
+typedef unsigned __int64 uint64_t;
+#else
+#include <stdint.h>
+#endif
+
 typedef int                 BOOL;
 typedef char                CHAR;
 typedef short               SHORT;
@@ -152,20 +175,19 @@ typedef unsigned short      wchar_t;
 #endif
 typedef wchar_t             WCHAR;
 typedef wchar_t *           PWCHAR;
-typedef size_t              SIZE_T;
 typedef WORD                ATOM;
 typedef unsigned int        ULONG32;
-typedef unsigned __int64    DWORD64;
-typedef unsigned __int64    ULONG64;
-typedef unsigned __int64    DWORDLONG;
+typedef uint64_t            DWORD64;
+typedef uint64_t            ULONG64;
+typedef uint64_t            DWORDLONG;
 
 typedef ULONG *             PULONG;
 typedef ULONG64 *           PULONG64;
 typedef DWORD64 *           PDWORD64;
 
 #if !defined(_M_IX86)
-typedef __int64             LONGLONG;
-typedef unsigned __int64    ULONGLONG;
+typedef int64_t             LONGLONG;
+typedef uint64_t            ULONGLONG;
 #else
 typedef double              LONGLONG;
 typedef double              ULONGLONG;
@@ -194,10 +216,10 @@ typedef DWORD *             LPDWORD;
 typedef const void *        LPCVOID;
 
 #if defined(_WIN64)
-typedef __int64             INT_PTR;
-typedef __int64             LONG_PTR;
-typedef unsigned __int64    UINT_PTR;
-typedef unsigned __int64    ULONG_PTR;
+typedef int64_t             INT_PTR;
+typedef int64_t             LONG_PTR;
+typedef uint64_t            UINT_PTR;
+typedef uint64_t            ULONG_PTR;
 #else
 typedef int                 INT_PTR;
 typedef long                LONG_PTR;
@@ -206,6 +228,9 @@ typedef unsigned long       ULONG_PTR;
 #endif
 typedef ULONG_PTR           DWORD_PTR;
 typedef DWORD_PTR *         PDWORD_PTR;
+
+typedef ULONG_PTR           SIZE_T;
+typedef LONG_PTR            SSIZE_T;
 
 typedef CHAR *              LPSTR;
 typedef WCHAR *             LPWSTR;
