@@ -5,11 +5,21 @@
 #ifndef WINDOWS_PROCESS_H
 #define WINDOWS_PROCESS_H
 
+/* Disable all warnings */
+#if defined(_MSC_VER)
+    #pragma warning(push, 0)
+#endif
+
 #ifndef WINDOWS_BASE_H
 #include "windows_base.h"
 #endif
 #if defined(__cplusplus)
 extern "C" {
+#endif
+
+/* Originally defined in threads.h */
+#ifndef INFINITE
+#define INFINITE                0xffffffff
 #endif
 
 /* Process Access Rights: */
@@ -259,6 +269,11 @@ BOOL WINAPI AssignProcessToJobObject(
 
 #if defined(__cplusplus)
 }
+#endif
+
+/* Enable all warnings */
+#if defined(_MSC_VER)
+    #pragma warning(pop)
 #endif
 
 #endif /* WINDOWS_PROCESS_H */

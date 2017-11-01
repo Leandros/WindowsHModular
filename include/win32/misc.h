@@ -5,6 +5,11 @@
 #ifndef WINDOWS_MISC_H
 #define WINDOWS_MISC_H
 
+/* Disable all warnings */
+#if defined(_MSC_VER)
+    #pragma warning(push, 0)
+#endif
+
 #ifndef WINDOWS_BASE_H
 #include "windows_base.h"
 #endif
@@ -206,6 +211,11 @@ PVOID SecureZeroMemory(
 
 #if defined(__cplusplus)
 }
+#endif
+
+/* Enable all warnings */
+#if defined(_MSC_VER)
+    #pragma warning(pop)
 #endif
 
 #endif /* WINDOWS_MISC_H */
