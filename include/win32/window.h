@@ -5,6 +5,11 @@
 #ifndef WINDOWS_WINDOW_H
 #define WINDOWS_WINDOW_H
 
+/* Disable all warnings */
+#if defined(_MSC_VER)
+    #pragma warning(push, 0)
+#endif
+
 #ifndef WINDOWS_BASE_H
 #include "windows_base.h"
 #endif
@@ -352,6 +357,11 @@ SHORT WINAPI GetKeyState(
 
 #if defined(__cplusplus)
 }
+#endif
+
+/* Enable all warnings */
+#if defined(_MSC_VER)
+    #pragma warning(pop)
 #endif
 
 #endif /* WINDOWS_WINDOW_H */

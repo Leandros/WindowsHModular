@@ -5,6 +5,11 @@
 #ifndef WINDOWS_BASE_H
 #define WINDOWS_BASE_H
 
+/* Disable all warnings */
+#if defined(_MSC_VER)
+    #pragma warning(push, 0)
+#endif
+
 /* size_t */
 /* #include <stddef.h> */
 
@@ -329,6 +334,11 @@ typedef struct _FILETIME {
     DWORD dwHighDateTime;
 } FILETIME, *PFILETIME, *LPFILETIME;
 
+
+/* Enable all warnings */
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 #endif /* WINDOWS_BASE_H */
 

@@ -5,6 +5,11 @@
 #ifndef WINDOWS_DBGHELP_H
 #define WINDOWS_DBGHELP_H
 
+/* Disable all warnings */
+#if defined(_MSC_VER)
+    #pragma warning(push, 0)
+#endif
+
 #ifndef WINDOWS_BASE_H
 #include "windows_base.h"
 #endif
@@ -835,6 +840,11 @@ GetTib(void)
 
 #if defined(__cplusplus)
 }
+#endif
+
+/* Enable all warnings */
+#if defined(_MSC_VER)
+    #pragma warning(pop)
 #endif
 
 #endif /* WINDOWS_DBGHELP_H */
