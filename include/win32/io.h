@@ -247,6 +247,28 @@ BOOL WINAPI PeekNamedPipe(
         LPDWORD lpTotalBytesAvail,
         LPDWORD lpBytesLeftThisMessage);
 
+/* ========================================================================== */
+/* Path Functions: */
+DWORD WINAPI GetFullPathNameA(
+        LPCSTR lpFileName,
+        DWORD   nBufferLength,
+        LPSTR  lpBuffer,
+        LPSTR  *lpFilePart);
+DWORD WINAPI GetFullPathNameW(
+        LPCWSTR lpFileName,
+        DWORD   nBufferLength,
+        LPWSTR  lpBuffer,
+        LPWSTR  *lpFilePart);
+BOOL WINAPI SetCurrentDirectoryA(
+        LPCSTR lpPathName);
+BOOL WINAPI SetCurrentDirectoryW(
+        LPCWSTR lpPathName);
+DWORD WINAPI GetCurrentDirectoryA(
+        DWORD  nBufferLength,
+        LPSTR lpBuffer);
+DWORD WINAPI GetCurrentDirectoryW(
+        DWORD  nBufferLength,
+        LPWSTR lpBuffer);
 
 #if defined(__cplusplus)
 }
