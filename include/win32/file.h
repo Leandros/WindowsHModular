@@ -91,11 +91,12 @@ extern "C" {
 #define TRUNCATE_EXISTING           5
 
 /* File Attributes: */
-#define INVALID_FILE_ATTRIBUTES     0xffffffff
-#define FILE_ATTRIBUTE_HIDDEN       0x2
-#define FILE_ATTRIBUTE_NORMAL       0x80
-#define FILE_ATTRIBUTE_DIRECTORY    0x10
-#define FILE_ATTRIBUTE_TEMPORARY    0x100
+#define INVALID_FILE_ATTRIBUTES         0xffffffff
+#define FILE_ATTRIBUTE_HIDDEN           0x2
+#define FILE_ATTRIBUTE_NORMAL           0x80
+#define FILE_ATTRIBUTE_DIRECTORY        0x10
+#define FILE_ATTRIBUTE_TEMPORARY        0x100
+#define FILE_ATTRIBUTE_REPARSE_POINT    0x400
 
 /* File Offsets: */
 #define FILE_BEGIN                  0
