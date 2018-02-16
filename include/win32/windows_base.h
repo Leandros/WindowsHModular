@@ -183,6 +183,7 @@ typedef uint64_t            DWORD64;
 typedef uint64_t            ULONG64;
 typedef uint64_t            DWORDLONG;
 
+typedef CHAR *              PCHAR;
 typedef ULONG *             PULONG;
 typedef ULONG64 *           PULONG64;
 typedef DWORD64 *           PDWORD64;

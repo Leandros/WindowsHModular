@@ -22,6 +22,14 @@ extern "C" {
 #define INFINITE                0xffffffff
 #endif
 
+/* Originally defined in file.h */
+#ifndef STANDARD_RIGHTS_REQUIRED
+#define STANDARD_RIGHTS_REQUIRED 0x000F0000L
+#endif
+#ifndef SYNCHRONIZE
+#define SYNCHRONIZE                 0x00100000L
+#endif
+
 /* Process Access Rights: */
 #define PROCESS_DUP_HANDLE          (0x0040)
 #define PROCESS_QUERY_INFORMATION   (0x0400)

@@ -345,6 +345,22 @@ typedef struct _SYMBOL_INFO {
     TCHAR   Name[1];
 } SYMBOL_INFO, *PSYMBOL_INFO, *PSYMBOL_INFOW;
 
+typedef struct _IMAGEHLP_LINE64 {
+    DWORD    SizeOfStruct;
+    PVOID    Key;
+    DWORD    LineNumber;
+    PCHAR    FileName;
+    DWORD64  Address;
+} IMAGEHLP_LINE64, *PIMAGEHLP_LINE64;
+
+typedef struct _IMAGEHLP_LINEW64 {
+    DWORD    SizeOfStruct;
+    PVOID    Key;
+    DWORD    LineNumber;
+    PWSTR    FileName;
+    DWORD64  Address;
+} IMAGEHLP_LINEW64, *PIMAGEHLP_LINEW64;
+
 /* Thread Walking: */
 typedef struct tagTHREADENTRY32 {
     DWORD dwSize;
@@ -533,6 +549,20 @@ BOOL WINAPI SymGetSearchPathW(
 
 BOOL WINAPI SymCleanup(
         HANDLE          hProcess);
+
+BOOL WINAPI SymGetLineFromAddr64(
+    HANDLE           hProcess,
+    DWORD64          dwAddr,
+    PDWORD           pdwDisplacement,
+    PIMAGEHLP_LINE64 Line
+);
+
+BOOL WINAPI SymGetLineFromAddrW64(
+    HANDLE            hProcess,
+    DWORD64           dwAddr,
+    PDWORD            pdwDisplacement,
+    PIMAGEHLP_LINEW64 Line
+);
 
 /* ========================================================================== */
 /* Exceptions: */

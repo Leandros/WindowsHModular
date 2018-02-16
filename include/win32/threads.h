@@ -20,6 +20,14 @@ extern "C" {
 /* WaitForSingleObject, WaitForMultipleObjects, etc: */
 #define INFINITE                0xffffffff
 
+/* Originally defined in file.h */
+#ifndef STANDARD_RIGHTS_REQUIRED
+#define STANDARD_RIGHTS_REQUIRED    0x000F0000L
+#endif
+#ifndef SYNCHRONIZE
+#define SYNCHRONIZE                 0x00100000L
+#endif
+
 #define STATUS_WAIT_0               ((DWORD)0x00000000L)
 #define STATUS_ABANDONED_WAIT_0     ((DWORD)0x00000080L)
 #define STATUS_TIMEOUT              ((DWORD)0x00000102L)
