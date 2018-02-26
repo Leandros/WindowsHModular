@@ -10,9 +10,6 @@
     #pragma warning(push, 0)
 #endif
 
-#ifndef WINDOWS_BASE_H
-#include "windows_base.h"
-#endif
 #if defined(__cplusplus)
 extern "C" {
 #endif
