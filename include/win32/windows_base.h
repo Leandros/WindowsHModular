@@ -9,6 +9,9 @@
 #if defined(_MSC_VER)
     #pragma warning(push, 0)
 #endif
+#if defined(__cplusplus)
+extern "C" {
+#endif
 
 /* size_t */
 /* #include <stddef.h> */
@@ -338,6 +341,9 @@ typedef struct _FILETIME {
 } FILETIME, *PFILETIME, *LPFILETIME;
 
 
+#if defined(__cplusplus)
+}
+#endif
 /* Enable all warnings */
 #if defined(_MSC_VER)
     #pragma warning(pop)
