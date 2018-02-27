@@ -10,6 +10,8 @@
     #pragma warning(push, 0)
 #endif
 
+#include "intrin.h"
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
