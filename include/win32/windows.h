@@ -3578,6 +3578,12 @@ extern "C" {
 /* TLS: */
 #define TLS_OUT_OF_INDEXES          ((DWORD)0xFFFFFFFF)
 
+/* Thread creation flags: */
+#define CREATE_NEW_CONSOLE          0x00000010
+#define CREATE_NO_WINDOW            0x08000000
+#define CREATE_SUSPENDED            0x00000004
+#define DETACHED_PROCESS            0x00000008
+
 /* Thread Access Rights: */
 #define THREAD_GET_CONTEXT          (0x0008)
 #define THREAD_QUERY_INFORMATION    (0x0040)
@@ -3685,6 +3691,8 @@ HANDLE WINAPI OpenThread(
         BOOL bInheritHandle,
         DWORD dwThreadId);
 DWORD WINAPI SuspendThread(
+        HANDLE hThread);
+DWORD WINAPI ResumeThread(
         HANDLE hThread);
 void WINAPI ExitThread(
         DWORD dwExitCode);
