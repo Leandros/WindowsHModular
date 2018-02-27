@@ -20,7 +20,7 @@ extern "C" {
 /* ========================================================================== */
 
 extern void _mm_pause(void);
-#pragma intrinsic(_ReadWriteBarrier)
+#pragma intrinsic(_mm_pause)
 
 extern void _ReadWriteBarrier(void);
 #pragma intrinsic(_ReadWriteBarrier)
@@ -29,6 +29,11 @@ extern void _ReadWriteBarrier(void);
 
 #if defined(__cplusplus)
 }
+#endif
+
+/* Enable all warnings */
+#if defined(_MSC_VER)
+    #pragma warning(pop)
 #endif
 
 #endif /* WINDOWS_INTRIN_H */
