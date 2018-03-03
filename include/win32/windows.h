@@ -1866,6 +1866,10 @@ extern "C" {
 #define FILE_TYPE_PIPE                  0x0003
 #define FILE_TYPE_REMOTE                0x8000
 
+/* Move Flags: */
+#define MOVEFILE_COPY_ALLOWED           0x2
+#define MOVEFILE_REPLACE_EXISTING       0x1
+
 
 /* ========================================================================== */
 /* Structures: */
@@ -2042,6 +2046,14 @@ BOOL WINAPI MoveFileA(
 BOOL WINAPI MoveFileW(
         LPCWSTR lpExistingFileName,
         LPCWSTR lpNewFileName);
+BOOL WINAPI MoveFileExA(
+        LPCSTR  lpExistingFileName,
+        LPCSTR  lpNewFileName,
+        DWORD   dwFlags);
+BOOL WINAPI MoveFileExW(
+        LPCWSTR lpExistingFileName,
+        LPCWSTR lpNewFileName
+        DWORD   dwFlags);
 BOOL WINAPI RemoveDirectoryA(
         LPCSTR  lpPathName);
 BOOL WINAPI RemoveDirectoryW(
