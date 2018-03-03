@@ -332,7 +332,7 @@ BOOL WINAPI MoveFileExA(
         DWORD   dwFlags);
 BOOL WINAPI MoveFileExW(
         LPCWSTR lpExistingFileName,
-        LPCWSTR lpNewFileName
+        LPCWSTR lpNewFileName,
         DWORD   dwFlags);
 BOOL WINAPI RemoveDirectoryA(
         LPCSTR  lpPathName);
