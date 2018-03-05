@@ -2494,6 +2494,34 @@ typedef UINT MMRESULT;
 #define CP_UTF7                     65000
 #define CP_UTF8                     65001
 
+/* Format: */
+#define FORMAT_MESSAGE_ALLOCATE_BUFFER  0x00000100
+#define FORMAT_MESSAGE_ARGUMENT_ARRAY   0x00002000
+#define FORMAT_MESSAGE_FROM_SYSTEM      0x00001000
+#define FORMAT_MESSAGE_IGNORE_INSERTS   0x00000200
+#define FORMAT_MESSAGE_FROM_HMODULE     0x00000800
+#define FORMAT_MESSAGE_FROM_STRING      0x00000400
+
+/* Language ID: */
+#define MAKELANGID(p, s)                ((((WORD)(s)) << 10) | (WORD  )(p))
+#define PRIMARYLANGID(lgid)             ((WORD)(lgid) & 0x3ff)
+#define SUBLANGID(lgid)                 ((WORD)(lgid) >> 10)
+
+#define LANG_NEUTRAL                    0x00
+#define LANG_INVARIANT                  0x7f
+#define LANG_ENGLISH                    0x09
+#define LANG_GERMAN                     0x07
+
+#define SUBLANG_NEUTRAL                 0x00
+#define SUBLANG_DEFAULT                 0x01
+#define SUBLANG_SYS_DEFAULT             0x02
+#define SUBLANG_CUSTOM_DEFAULT          0x03
+#define SUBLANG_CUSTOM_UNSPECIFIED      0x04
+#define SUBLANG_UI_CUSTOM_DEFAULT       0x05
+#define SUBLANG_ENGLISH_US              0x01
+#define SUBLANG_ENGLISH_UK              0x02
+#define SUBLANG_GERMAN                  0x01
+
 
 /* ========================================================================== */
 /* Structures: */
@@ -2638,6 +2666,22 @@ HMODULE WINAPI GetModuleHandleA(
         LPCSTR lpModuleName);
 HMODULE WINAPI GetModuleHandleW(
         LPCWSTR lpModuleName);
+DWORD WINAPI FormatMessageA(
+        DWORD   dwFlags,
+        LPCVOID lpSource,
+        DWORD   dwMessageId,
+        DWORD   dwLanguageId,
+        LPSTR   lpBuffer,
+        DWORD   nSize,
+        va_list *Arguments);
+DWORD WINAPI FormatMessageW(
+        DWORD   dwFlags,
+        LPCVOID lpSource,
+        DWORD   dwMessageId,
+        DWORD   dwLanguageId,
+        LPWSTR  lpBuffer,
+        DWORD   nSize,
+        va_list *Arguments);
 
 /* ========================================================================== */
 /* Timer Functions: */
