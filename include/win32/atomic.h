@@ -188,6 +188,15 @@ __int64 _InterlockedCompareExchange64_HLERelease(
         __int64 Exchange,
         __int64 Comparand);
 
+/* ========================================================================== */
+/* 128-Bit Atomic Intrinsics:                                                 */
+/* Exchange */
+unsigned char _InterlockedCompareExchange128(
+        __int64 volatile *Destination,
+        __int64 ExchangeHigh,
+        __int64 ExchangeLow,
+        __int64 *ComparandResult);
+
 #endif
 
 /* Win32 InterlockedXX functions are defined as macros */
@@ -227,6 +236,8 @@ __int64 _InterlockedCompareExchange64_HLERelease(
     #define InterlockedDecrement64              _InterlockedDecrement64
     #define InterlockedIncrement64              _InterlockedIncrement64
     #define InterlockedCompareExchange64        _InterlockedCompareExchange64
+
+    #define InterlockedCompareExchange128       _InterlockedCompareExchange128
 #endif
 
 
