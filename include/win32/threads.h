@@ -121,6 +121,14 @@ typedef PRTL_CRITICAL_SECTION   PCRITICAL_SECTION;
 typedef PRTL_CRITICAL_SECTION   LPCRITICAL_SECTION;
 #pragma pack(pop)
 
+typedef struct _RTL_CONDITION_VARIABLE {
+    PVOID Ptr;
+} RTL_CONDITION_VARIABLE, *PRTL_CONDITION_VARIABLE;
+#define RTL_CONDITION_VARIABLE_INIT {0}
+#define RTL_CONDITION_VARIABLE_LOCKMODE_SHARED 0x1
+typedef RTL_CONDITION_VARIABLE  CONDITION_VARIABLE;
+typedef PRTL_CONDITION_VARIABLE PCONDITION_VARIABLE;
+
 
 /* ========================================================================== */
 /* Waiting Functions: */
@@ -184,6 +192,19 @@ void WINAPI DeleteCriticalSection(
         LPCRITICAL_SECTION lpCriticalSection);
 
 /* ========================================================================== */
+/* Condition Variable: */
+void WINAPI InitializeConditionVariable(
+        PCONDITION_VARIABLE ConditionVariable);
+BOOL WINAPI SleepConditionVariableCS(
+        PCONDITION_VARIABLE ConditionVariable,
+        PCRITICAL_SECTION   CriticalSection,
+        DWORD               dwMilliseconds);
+void WINAPI WakeAllConditionVariable(
+        PCONDITION_VARIABLE ConditionVariable);
+VOID WINAPI WakeConditionVariable(
+        PCONDITION_VARIABLE ConditionVariable);
+
+/* ========================================================================== */
 /* Mutex Functions: */
 HANDLE WINAPI CreateMutexA(
         LPSECURITY_ATTRIBUTES lpMutexAttributes,
@@ -193,7 +214,6 @@ HANDLE WINAPI CreateMutexW(
         LPSECURITY_ATTRIBUTES lpMutexAttributes,
         BOOL bInitialOwner,
         LPCWSTR lpName);
-
 BOOL WINAPI ReleaseMutex(
         HANDLE hMutex);
 
@@ -209,7 +229,6 @@ HANDLE WINAPI CreateSemaphoreW(
         LONG lInitialCount,
         LONG lMaximumCount,
         LPCWSTR lpName);
-
 BOOL WINAPI ReleaseSemaphore(
         HANDLE hSemaphore,
         LONG lReleaseCount,
