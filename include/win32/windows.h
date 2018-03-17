@@ -981,8 +981,26 @@ typedef struct _SYMBOL_INFO {
     ULONG   Tag;
     ULONG   NameLen;
     ULONG   MaxNameLen;
-    TCHAR   Name[1];
-} SYMBOL_INFO, *PSYMBOL_INFO, *PSYMBOL_INFOW;
+    CHAR    Name[1];
+} SYMBOL_INFO, *PSYMBOL_INFO;
+
+typedef struct _SYMBOL_INFOW {
+    ULONG   SizeOfStruct;
+    ULONG   TypeIndex;
+    ULONG64 Reserved[2];
+    ULONG   Index;
+    ULONG   Size;
+    ULONG64 ModBase;
+    ULONG   Flags;
+    ULONG64 Value;
+    ULONG64 Address;
+    ULONG   Register;
+    ULONG   Scope;
+    ULONG   Tag;
+    ULONG   NameLen;
+    ULONG   MaxNameLen;
+    WCHAR   Name[1];
+} SYMBOL_INFOW, *PSYMBOL_INFOW;
 
 typedef struct _IMAGEHLP_LINE64 {
     DWORD    SizeOfStruct;
@@ -1109,7 +1127,7 @@ BOOL WINAPI SymFromAddrW(
         HANDLE          hProcess,
         DWORD64         Address,
         PDWORD64        Displacement,
-        PSYMBOL_INFO    Symbol);
+        PSYMBOL_INFOW   Symbol);
 PVOID WINAPI SymFunctionTableAccess64(
         HANDLE          hProcess,
         DWORD64         AddrBase);
@@ -3727,6 +3745,14 @@ typedef PRTL_CRITICAL_SECTION   PCRITICAL_SECTION;
 typedef PRTL_CRITICAL_SECTION   LPCRITICAL_SECTION;
 #pragma pack(pop)
 
+typedef struct _RTL_CONDITION_VARIABLE {
+    PVOID Ptr;
+} RTL_CONDITION_VARIABLE, *PRTL_CONDITION_VARIABLE;
+#define RTL_CONDITION_VARIABLE_INIT {0}
+#define RTL_CONDITION_VARIABLE_LOCKMODE_SHARED 0x1
+typedef RTL_CONDITION_VARIABLE  CONDITION_VARIABLE;
+typedef PRTL_CONDITION_VARIABLE PCONDITION_VARIABLE;
+
 
 /* ========================================================================== */
 /* Waiting Functions: */
@@ -3790,6 +3816,19 @@ void WINAPI DeleteCriticalSection(
         LPCRITICAL_SECTION lpCriticalSection);
 
 /* ========================================================================== */
+/* Condition Variable: */
+void WINAPI InitializeConditionVariable(
+        PCONDITION_VARIABLE ConditionVariable);
+BOOL WINAPI SleepConditionVariableCS(
+        PCONDITION_VARIABLE ConditionVariable,
+        PCRITICAL_SECTION   CriticalSection,
+        DWORD               dwMilliseconds);
+void WINAPI WakeAllConditionVariable(
+        PCONDITION_VARIABLE ConditionVariable);
+VOID WINAPI WakeConditionVariable(
+        PCONDITION_VARIABLE ConditionVariable);
+
+/* ========================================================================== */
 /* Mutex Functions: */
 HANDLE WINAPI CreateMutexA(
         LPSECURITY_ATTRIBUTES lpMutexAttributes,
@@ -3799,7 +3838,6 @@ HANDLE WINAPI CreateMutexW(
         LPSECURITY_ATTRIBUTES lpMutexAttributes,
         BOOL bInitialOwner,
         LPCWSTR lpName);
-
 BOOL WINAPI ReleaseMutex(
         HANDLE hMutex);
 
@@ -3815,7 +3853,6 @@ HANDLE WINAPI CreateSemaphoreW(
         LONG lInitialCount,
         LONG lMaximumCount,
         LPCWSTR lpName);
-
 BOOL WINAPI ReleaseSemaphore(
         HANDLE hSemaphore,
         LONG lReleaseCount,
