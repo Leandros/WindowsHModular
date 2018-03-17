@@ -3825,7 +3825,7 @@ BOOL WINAPI SleepConditionVariableCS(
         DWORD               dwMilliseconds);
 void WINAPI WakeAllConditionVariable(
         PCONDITION_VARIABLE ConditionVariable);
-VOID WINAPI WakeConditionVariable(
+void WINAPI WakeConditionVariable(
         PCONDITION_VARIABLE ConditionVariable);
 
 /* ========================================================================== */
