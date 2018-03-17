@@ -342,8 +342,26 @@ typedef struct _SYMBOL_INFO {
     ULONG   Tag;
     ULONG   NameLen;
     ULONG   MaxNameLen;
-    TCHAR   Name[1];
-} SYMBOL_INFO, *PSYMBOL_INFO, *PSYMBOL_INFOW;
+    CHAR    Name[1];
+} SYMBOL_INFO, *PSYMBOL_INFO;
+
+typedef struct _SYMBOL_INFOW {
+    ULONG   SizeOfStruct;
+    ULONG   TypeIndex;
+    ULONG64 Reserved[2];
+    ULONG   Index;
+    ULONG   Size;
+    ULONG64 ModBase;
+    ULONG   Flags;
+    ULONG64 Value;
+    ULONG64 Address;
+    ULONG   Register;
+    ULONG   Scope;
+    ULONG   Tag;
+    ULONG   NameLen;
+    ULONG   MaxNameLen;
+    WCHAR   Name[1];
+} SYMBOL_INFOW, *PSYMBOL_INFOW;
 
 typedef struct _IMAGEHLP_LINE64 {
     DWORD    SizeOfStruct;
@@ -470,7 +488,7 @@ BOOL WINAPI SymFromAddrW(
         HANDLE          hProcess,
         DWORD64         Address,
         PDWORD64        Displacement,
-        PSYMBOL_INFO    Symbol);
+        PSYMBOL_INFOW   Symbol);
 PVOID WINAPI SymFunctionTableAccess64(
         HANDLE          hProcess,
         DWORD64         AddrBase);
