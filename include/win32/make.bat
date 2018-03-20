@@ -41,6 +41,8 @@ type window.h >> windows.h
 echo: >> windows.h
 type intrin.h >> windows.h
 echo: >> windows.h
+type fiber.h >> windows.h
+echo: >> windows.h
 
 :: Finish skeleton
 echo #endif >> windows.h
