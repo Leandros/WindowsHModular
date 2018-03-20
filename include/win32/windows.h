@@ -4322,6 +4322,7 @@ extern "C" {
 /* ========================================================================= */
 typedef void (WINAPI *PFIBER_START_ROUTINE)(LPVOID lpFiberParameter);
 typedef PFIBER_START_ROUTINE LPFIBER_START_ROUTINE;
+typedef void(NTAPI *PFLS_CALLBACK_FUNCTION)(PVOID lpFlsData);
 
 BOOL WINAPI IsThreadAFiber(void);
 
@@ -4346,7 +4347,7 @@ LPVOID WINAPI ConvertThreadToFiberEx(
     LPVOID lpParameter,
     DWORD dwFlags);
 
-#ifdef _WIN64
+#ifdef _AMD64_
 __inline PVOID
 GetCurrentFiber(void)
 {
