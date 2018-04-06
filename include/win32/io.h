@@ -231,6 +231,16 @@ BOOL WINAPI VirtualFree(
         LPVOID lpAddress,
         SIZE_T dwSize,
         DWORD dwFreeType);
+BOOL WINAPI VirtualProtect(
+        LPVOID lpAddress,
+        SIZE_T dwSize,
+        DWORD flNewProtect,
+        PDWORD lpflOldProtect);
+BOOL WINAPI FlushInstructionCache(
+        HANDLE hProcess,
+        LPCVOID lpBaseAddress,
+        SIZE_T dwSize);
+
 
 /* ========================================================================== */
 /* Pipe Functions: */

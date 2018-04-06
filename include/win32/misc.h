@@ -173,8 +173,6 @@ BOOL WINAPI SystemTimeToTzSpecificLocalTime(
         LPSYSTEMTIME lpUniversalTime,
         LPSYSTEMTIME lpLocalTime);
 DWORD timeGetTime(void);
-MMRESULT timeBeginPeriod(
-        UINT uPeriod);
 
 /* ========================================================================== */
 /* Environment: */
@@ -224,6 +222,7 @@ DWORD WINAPI FormatMessageW(
         DWORD   nSize,
         va_list *Arguments);
 
+
 /* ========================================================================== */
 /* Timer Functions: */
 DWORD WINAPI GetTickCount(void);
@@ -232,6 +231,24 @@ BOOL WINAPI QueryPerformanceFrequency(
         LARGE_INTEGER *lpFrequency);
 BOOL WINAPI QueryPerformanceCounter(
         LARGE_INTEGER *lpPerformanceCount);
+
+
+/* ========================================================================== */
+/* Multi Media Timer:                                                         */
+#define TIMERR_NOERROR        (0)                  /* no error */
+#define TIMERR_NOCANDO        (TIMERR_BASE+1)      /* request not completed */
+#define TIMERR_STRUCT         (TIMERR_BASE+33)     /* time struct size */
+
+typedef struct timecaps_tag {
+    UINT    wPeriodMin;     /* minimum period supported  */
+    UINT    wPeriodMax;     /* maximum period supported  */
+} TIMECAPS, *PTIMECAPS, *NPTIMECAPS, *LPTIMECAPS;
+typedef UINT MMRESULT;
+
+MMRESULT WINAPI timeGetDevCaps(LPTIMECAPS ptc, UINT cbtc);
+MMRESULT WINAPI timeBeginPeriod(UINT uPeriod);
+MMRESULT WINAPI timeEndPeriod(UINT uPeriod);
+
 
 /* ========================================================================== */
 /* DLL Functions: */
