@@ -3780,6 +3780,11 @@ typedef struct _RTL_CONDITION_VARIABLE {
 typedef RTL_CONDITION_VARIABLE  CONDITION_VARIABLE;
 typedef PRTL_CONDITION_VARIABLE PCONDITION_VARIABLE;
 
+#define SRWLOCK_INIT {0}
+typedef struct _RTL_SRWLOCK {
+        PVOID Ptr;
+} RTL_SRWLOCK, *PRTL_SRWLOCK;
+typedef RTL_SRWLOCK SRWLOCK, *PSRWLOCK;
 
 /* ========================================================================== */
 /* Waiting Functions: */
@@ -3895,6 +3900,26 @@ LPVOID WINAPI TlsGetValue(
         DWORD   dwTlsIndex);
 DWORD WINAPI TlsFree(
         DWORD   dwTlsIndex);
+
+/* ========================================================================== */
+/* SRW Lock Functions: */
+void WINAPI InitializeSRWLock(PSRWLOCK SRWLock);
+
+void WINAPI AcquireSRWLockExclusive(PSRWLOCK SRWLock);
+void WINAPI AcquireSRWLockShared(PSRWLOCK SRWLock);
+
+void WINAPI ReleaseSRWLockExclusive(PSRWLOCK SRWLock);
+void WINAPI ReleaseSRWLockShared(PSRWLOCK SRWLock);
+
+BOOL WINAPI TryAcquireSRWLockExclusive(PSRWLOCK SRWLock);
+BOOL WINAPI TryAcquireSRWLockShared(PSRWLOCK SRWLock);
+
+BOOL WINAPI SleepConditionVariableSRW(
+    PCONDITION_VARIABLE ConditionVariable,
+    PSRWLOCK            SRWLock,
+    DWORD               dwMilliseconds,
+    ULONG               Flags);
+
 
 #if defined(__cplusplus)
 }

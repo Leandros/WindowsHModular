@@ -260,8 +260,8 @@ void WINAPI AcquireSRWLockShared(PSRWLOCK SRWLock);
 void WINAPI ReleaseSRWLockExclusive(PSRWLOCK SRWLock);
 void WINAPI ReleaseSRWLockShared(PSRWLOCK SRWLock);
 
-BOOLEAN WINAPI TryAcquireSRWLockExclusive(PSRWLOCK SRWLock);
-BOOLEAN WINAPI TryAcquireSRWLockShared(PSRWLOCK SRWLock);
+BOOL WINAPI TryAcquireSRWLockExclusive(PSRWLOCK SRWLock);
+BOOL WINAPI TryAcquireSRWLockShared(PSRWLOCK SRWLock);
 
 BOOL WINAPI SleepConditionVariableSRW(
     PCONDITION_VARIABLE ConditionVariable,
