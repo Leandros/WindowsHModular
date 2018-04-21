@@ -3374,6 +3374,13 @@ typedef struct _MEMORYSTATUSEX {
     DWORDLONG ullAvailExtendedVirtual;
 } MEMORYSTATUSEX, *LPMEMORYSTATUSEX;
 
+/* Processor: */
+typedef struct _PROCESSOR_NUMBER {
+  WORD Group;
+  BYTE Number;
+  BYTE Reserved;
+} PROCESSOR_NUMBER, *PPROCESSOR_NUMBER;
+
 
 /* ========================================================================== */
 /* System Info Functions: */
@@ -3398,6 +3405,14 @@ BOOL WINAPI GetProcessTimes(
         LPFILETIME lpExitTime,
         LPFILETIME lpKernelTime,
         LPFILETIME lpUserTime);
+
+/* ========================================================================== */
+/* Processor Functions                                                        */
+DWORD WINAPI GetCurrentProcessorNumber(void);
+void GetCurrentProcessorNumberEx(PPROCESSOR_NUMBER ProcNumber);
+#define ALL_PROCESSOR_GROUPS 0xffff
+DWORD GetActiveProcessorCount(WORD GroupNumber);
+
 
 #define MAX_COMPUTERNAME_LENGTH 31
 BOOL WINAPI GetComputerNameA(
