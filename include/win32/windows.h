@@ -31,7 +31,9 @@ extern "C" {
  * See here for more information regarding this define:
  * https://msdn.microsoft.com/en-us/library/aa383745(VS.85).aspx
  */
-#define _WIN32_WINNT 0x0600
+#ifndef _WIN32_WINNT
+    #define _WIN32_WINNT 0x0600
+#endif
 
 /* Magic: */
 #define _CRTALLOC(x)        __declspec(allocate(x))
