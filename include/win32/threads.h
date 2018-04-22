@@ -176,6 +176,9 @@ BOOL WINAPI GetProcessAffinityMask(
         HANDLE hProcess,
         PDWORD_PTR lpProcessAffinityMask,
         PDWORD_PTR lpSystemAffinityMask);
+BOOL WINAPI SetProcessAffinityMask(
+        HANDLE    hProcess,
+        DWORD_PTR dwProcessAffinityMask);
 
 /* ========================================================================== */
 /* CriticalSection Functions: */

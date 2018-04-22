@@ -297,9 +297,10 @@ typedef ACCESS_MASK         REGSAM;
 /* ========================================================================== */
 /* Errors: */
 /* ========================================================================== */
-#define ERROR_SUCCESS           0L
-#define ERROR_NO_MORE_FILES     18L
-#define ERROR_MORE_DATA         234L
+#define ERROR_SUCCESS               0L
+#define ERROR_NO_MORE_FILES         18L
+#define ERROR_MORE_DATA             234L
+#define ERROR_INSUFFICIENT_BUFFER   122L
 
 
 /* ========================================================================== */
@@ -3844,6 +3845,9 @@ BOOL WINAPI GetProcessAffinityMask(
         HANDLE hProcess,
         PDWORD_PTR lpProcessAffinityMask,
         PDWORD_PTR lpSystemAffinityMask);
+BOOL WINAPI SetProcessAffinityMask(
+        HANDLE    hProcess,
+        DWORD_PTR dwProcessAffinityMask);
 
 /* ========================================================================== */
 /* CriticalSection Functions: */
