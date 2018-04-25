@@ -1,6 +1,6 @@
  
 #ifndef _WINDOWS_ 
-#define _WINDOWS_ 
+#pragma once 
 #ifndef _INC_WINDOWS 
 #define _INC_WINDOWS 
 #ifndef WINDOWS_H 
@@ -4496,4 +4496,5 @@ BOOL WINAPI FlsFree(DWORD dwFlsIndex);
  
 #endif 
 #endif 
+#define _WINDOWS_ 
 #endif 

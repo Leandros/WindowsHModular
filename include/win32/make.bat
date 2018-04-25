@@ -6,7 +6,7 @@ del /F /Q windows.h
 :: Generate skeleton
 echo: > windows.h
 echo #ifndef _WINDOWS_ >> windows.h
-echo #define _WINDOWS_ >> windows.h
+echo #pragma once >> windows.h
 echo #ifndef _INC_WINDOWS >> windows.h
 echo #define _INC_WINDOWS >> windows.h
 echo #ifndef WINDOWS_H >> windows.h
@@ -47,5 +47,6 @@ echo: >> windows.h
 :: Finish skeleton
 echo #endif >> windows.h
 echo #endif >> windows.h
+echo #define _WINDOWS_ >> windows.h
 echo #endif >> windows.h
 
