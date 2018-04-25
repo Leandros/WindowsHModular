@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_SYSINFO_H
 #define WINDOWS_SYSINFO_H
 
@@ -591,4 +592,5 @@ LONG WINAPI RegFlushKey(
 #endif
 
 #endif /* WINDOWS_SYSINFO_H */
+#endif /* _WINDOWS_ */
 

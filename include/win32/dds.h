@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_DDS_H
 #define WINDOWS_DDS_H
 
@@ -206,4 +207,5 @@ typedef struct {
 #endif
 
 #endif /* WINDOWS_DDS_H */
+#endif /* _WINDOWS_ */
 

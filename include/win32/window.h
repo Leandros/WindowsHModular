@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_WINDOW_H
 #define WINDOWS_WINDOW_H
 
@@ -365,4 +366,5 @@ SHORT WINAPI GetKeyState(
 #endif
 
 #endif /* WINDOWS_WINDOW_H */
+#endif /* _WINDOWS_ */
 

@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_IO_H
 #define WINDOWS_IO_H
 
@@ -290,4 +291,5 @@ DWORD WINAPI GetCurrentDirectoryW(
 #endif
 
 #endif /* WINDOWS_IO_H */
+#endif /* _WINDOWS_ */
 

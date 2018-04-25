@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_GDI_H
 #define WINDOWS_GDI_H
 
@@ -57,4 +58,5 @@ HCURSOR WINAPI SetCursor(
 #endif
 
 #endif /* WINDOWS_GDI_H */
+#endif /* _WINDOWS_ */
 

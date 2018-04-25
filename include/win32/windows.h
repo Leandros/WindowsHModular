@@ -11,6 +11,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_BASE_H
 #define WINDOWS_BASE_H
 
@@ -362,12 +363,14 @@ typedef struct _FILETIME {
 #endif
 
 #endif /* WINDOWS_BASE_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_ATOMIC_H
 #define WINDOWS_ATOMIC_H
 
@@ -638,12 +641,14 @@ void _ReadWriteBarrier(void);
 #endif
 
 #endif /* WINDOWS_ATOMIC_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_DBGHELP_H
 #define WINDOWS_DBGHELP_H
 
@@ -1538,12 +1543,14 @@ GetTib(void)
 #endif
 
 #endif /* WINDOWS_DBGHELP_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_DDS_H
 #define WINDOWS_DDS_H
 
@@ -1748,12 +1755,14 @@ typedef struct {
 #endif
 
 #endif /* WINDOWS_DDS_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_FILE_H
 #define WINDOWS_FILE_H
 
@@ -2142,12 +2151,14 @@ DWORD WINAPI GetFileType(
 #endif
 
 #endif /* WINDOWS_FILE_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_GDI_H
 #define WINDOWS_GDI_H
 
@@ -2203,12 +2214,14 @@ HCURSOR WINAPI SetCursor(
 #endif
 
 #endif /* WINDOWS_GDI_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_IO_H
 #define WINDOWS_IO_H
 
@@ -2497,12 +2510,14 @@ DWORD WINAPI GetCurrentDirectoryW(
 #endif
 
 #endif /* WINDOWS_IO_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_MISC_H
 #define WINDOWS_MISC_H
 
@@ -2781,12 +2796,14 @@ PVOID SecureZeroMemory(
 #endif
 
 #endif /* WINDOWS_MISC_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_PROCESS_H
 #define WINDOWS_PROCESS_H
 
@@ -3070,12 +3087,14 @@ BOOL WINAPI AssignProcessToJobObject(
 #endif
 
 #endif /* WINDOWS_PROCESS_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_SYSINFO_H
 #define WINDOWS_SYSINFO_H
 
@@ -3665,12 +3684,14 @@ LONG WINAPI RegFlushKey(
 #endif
 
 #endif /* WINDOWS_SYSINFO_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_THREADS_H
 #define WINDOWS_THREADS_H
 
@@ -3952,12 +3973,14 @@ BOOL WINAPI SleepConditionVariableSRW(
 #endif
 
 #endif /* WINDOWS_THREADS_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_WINDOW_H
 #define WINDOWS_WINDOW_H
 
@@ -4321,12 +4344,14 @@ SHORT WINAPI GetKeyState(
 #endif
 
 #endif /* WINDOWS_WINDOW_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_INTRIN_H
 #define WINDOWS_INTRIN_H
 
@@ -4362,12 +4387,14 @@ extern void _ReadWriteBarrier(void);
 #endif
 
 #endif /* WINDOWS_INTRIN_H */
+#endif /* _WINDOWS_ */
 
  
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_FIBER_H
 #define WINDOWS_FIBER_H
 
@@ -4464,6 +4491,7 @@ BOOL WINAPI FlsFree(DWORD dwFlsIndex);
 #endif
 
 #endif /* WINDOWS_FIBER_H */
+#endif /* _WINDOWS_ */
 
  
 #endif 

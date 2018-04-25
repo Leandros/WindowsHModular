@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_PROCESS_H
 #define WINDOWS_PROCESS_H
 
@@ -285,4 +286,5 @@ BOOL WINAPI AssignProcessToJobObject(
 #endif
 
 #endif /* WINDOWS_PROCESS_H */
+#endif /* _WINDOWS_ */
 

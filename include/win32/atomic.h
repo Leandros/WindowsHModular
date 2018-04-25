@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_ATOMIC_H
 #define WINDOWS_ATOMIC_H
 
@@ -272,4 +273,5 @@ void _ReadWriteBarrier(void);
 #endif
 
 #endif /* WINDOWS_ATOMIC_H */
+#endif /* _WINDOWS_ */
 

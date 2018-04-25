@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_THREADS_H
 #define WINDOWS_THREADS_H
 
@@ -283,4 +284,5 @@ BOOL WINAPI SleepConditionVariableSRW(
 #endif
 
 #endif /* WINDOWS_THREADS_H */
+#endif /* _WINDOWS_ */
 

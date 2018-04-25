@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_FIBER_H
 #define WINDOWS_FIBER_H
 
@@ -98,4 +99,5 @@ BOOL WINAPI FlsFree(DWORD dwFlsIndex);
 #endif
 
 #endif /* WINDOWS_FIBER_H */
+#endif /* _WINDOWS_ */
 

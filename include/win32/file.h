@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_FILE_H
 #define WINDOWS_FILE_H
 
@@ -390,4 +391,5 @@ DWORD WINAPI GetFileType(
 #endif
 
 #endif /* WINDOWS_FILE_H */
+#endif /* _WINDOWS_ */
 

@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
+#ifndef _WINDOWS_
 #ifndef WINDOWS_BASE_H
 #define WINDOWS_BASE_H
 
@@ -353,4 +354,5 @@ typedef struct _FILETIME {
 #endif
 
 #endif /* WINDOWS_BASE_H */
+#endif /* _WINDOWS_ */
 
