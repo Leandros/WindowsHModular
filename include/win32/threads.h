@@ -180,6 +180,7 @@ BOOL WINAPI GetProcessAffinityMask(
 BOOL WINAPI SetProcessAffinityMask(
         HANDLE    hProcess,
         DWORD_PTR dwProcessAffinityMask);
+BOOL WINAPI SwitchToThread(void);
 
 /* ========================================================================== */
 /* CriticalSection Functions: */
