@@ -11,6 +11,8 @@
     #pragma warning(push, 0)
 #endif
 
+#include <stdarg.h>
+
 #ifndef WINDOWS_BASE_H
 #include "windows_base.h"
 #endif

@@ -226,6 +226,7 @@ typedef HANDLE              HWND;
 typedef HINSTANCE           HMODULE;
 typedef HANDLE              HMENU;
 typedef HANDLE *            PHANDLE;
+typedef HANDLE *            LPHANDLE;
 
 typedef WCHAR *             PWSTR;
 typedef BYTE *              LPBYTE;
@@ -1911,6 +1912,9 @@ extern "C" {
 #define MOVEFILE_COPY_ALLOWED           0x2
 #define MOVEFILE_REPLACE_EXISTING       0x1
 
+typedef DWORD SECURITY_INFORMATION, *PSECURITY_INFORMATION;
+typedef HANDLE PSECURITY_DESCRIPTOR;
+
 
 /* ========================================================================== */
 /* Structures: */
@@ -2140,6 +2144,36 @@ BOOL WINAPI FindCloseChangeNotification(
 /* File Misc: */
 DWORD WINAPI GetFileType(
         HANDLE hFile);
+
+/* ========================================================================== */
+/* Temp File: */
+UINT WINAPI GetTempFileNameW(
+    LPCWSTR lpPathName,
+    LPCWSTR lpPrefixString,
+    UINT    uUnique,
+    LPWSTR  lpTempFileName
+);
+
+DWORD WINAPI GetTempPathW(
+    DWORD  nBufferLength,
+    LPWSTR lpBuffer
+);
+
+/* ========================================================================== */
+/* File Security: */
+BOOL WINAPI GetFileSecurityA(
+    LPCSTR               lpFileName,
+    SECURITY_INFORMATION RequestedInformation,
+    PSECURITY_DESCRIPTOR pSecurityDescriptor,
+    DWORD                nLength,
+    LPDWORD              lpnLengthNeeded);
+BOOL WINAPI GetFileSecurityW(
+    LPCWSTR              lpFileName,
+    SECURITY_INFORMATION RequestedInformation,
+    PSECURITY_DESCRIPTOR pSecurityDescriptor,
+    DWORD                nLength,
+    LPDWORD              lpnLengthNeeded);
+
 
 #if defined(__cplusplus)
 }
@@ -2382,6 +2416,15 @@ BOOL WINAPI SetHandleInformation(
         HANDLE hObject,
         DWORD  dwMask,
         DWORD  dwFlags);
+BOOL WINAPI DuplicateHandle(
+        HANDLE hSourceProcessHandle,
+        HANDLE hSourceHandle,
+        HANDLE hTargetProcessHandle,
+        LPHANDLE lpTargetHandle,
+        DWORD dwDesiredAccess,
+        BOOL bInheritHandle,
+        DWORD dwOptions);
+
 
 LPSTR WINAPI GetCommandLineA(void);
 LPWSTR WINAPI GetCommandLineW(void);
@@ -2525,6 +2568,8 @@ DWORD WINAPI GetCurrentDirectoryW(
 #if defined(_MSC_VER)
     #pragma warning(push, 0)
 #endif
+
+#include <stdarg.h>
 
 #ifndef WINDOWS_BASE_H
 #include "windows_base.h"
@@ -3747,6 +3792,12 @@ extern "C" {
      SYNCHRONIZE | \
      0xFFFF)
 
+/* Semaphore Access Rights: */
+#define SEMAPHORE_ALL_ACCESS        0x1F0003
+#define SEMAPHORE_MODIFY_STATE      0x0002
+#define EVENT_ALL_ACCESS            0x1F0003
+#define EVENT_MODIFY_STATE          0x0002
+
 
 /* ========================================================================== */
 /* Structures: */
@@ -3835,6 +3886,17 @@ DWORD WINAPI WaitForMultipleObjects(
   const HANDLE *lpHandles,
         BOOL    bWaitAll,
         DWORD   dwMilliseconds);
+
+DWORD WINAPI WaitForSingleObjectEx(
+        HANDLE hHandle,
+        DWORD dwMilliseconds,
+        BOOL bAlertable);
+DWORD WINAPI WaitForMultipleObjectsEx(
+        DWORD nCount,
+  const HANDLE *lpHandles,
+        BOOL bWaitAll,
+        DWORD dwMilliseconds,
+        BOOL bAlertable);
 
 /* ========================================================================== */
 /* Threading Functions: */
@@ -3932,6 +3994,15 @@ BOOL WINAPI ReleaseSemaphore(
         HANDLE hSemaphore,
         LONG lReleaseCount,
         LPLONG lpPreviousCount);
+HANDLE WINAPI OpenSemaphoreA(
+        DWORD dwDesiredAccess,
+        BOOL bInheritHandle,
+        LPCSTR lpName);
+HANDLE WINAPI OpenSemaphoreW(
+        DWORD dwDesiredAccess,
+        BOOL bInheritHandle,
+        LPCWSTR lpName);
+
 
 /* ========================================================================== */
 /* Thread-Local Storage: */
@@ -3962,6 +4033,34 @@ BOOL WINAPI SleepConditionVariableSRW(
     PSRWLOCK            SRWLock,
     DWORD               dwMilliseconds,
     ULONG               Flags);
+
+/* ========================================================================== */
+/* Waiting: */
+BOOL  WINAPI WaitOnAddress(
+    void   volatile *Address,
+    PVOID           CompareAddress,
+    SIZE_T          AddressSize,
+    DWORD           dwMilliseconds);
+void  WINAPI WakeByAddressSingle(
+    PVOID Address);
+void  WINAPI WakeByAddressAll(
+    PVOID Address);
+
+/* ========================================================================== */
+/* Events: */
+HANDLE WINAPI CreateEvent(
+    LPSECURITY_ATTRIBUTES lpEventAttributes,
+    BOOL                  bManualReset,
+    BOOL                  bInitialState,
+    LPCTSTR               lpName);
+HANDLE WINAPI OpenEvent(
+    DWORD   dwDesiredAccess,
+    BOOL    bInheritHandle,
+    LPCTSTR lpName);
+BOOL WINAPI SetEvent(
+    HANDLE hEvent);
+BOOL WINAPI ResetEvent(
+    HANDLE hEvent);
 
 
 #if defined(__cplusplus)

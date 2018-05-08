@@ -217,6 +217,7 @@ typedef HANDLE              HWND;
 typedef HINSTANCE           HMODULE;
 typedef HANDLE              HMENU;
 typedef HANDLE *            PHANDLE;
+typedef HANDLE *            LPHANDLE;
 
 typedef WCHAR *             PWSTR;
 typedef BYTE *              LPBYTE;

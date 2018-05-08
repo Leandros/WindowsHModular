@@ -151,6 +151,9 @@ extern "C" {
 #define MOVEFILE_COPY_ALLOWED           0x2
 #define MOVEFILE_REPLACE_EXISTING       0x1
 
+typedef DWORD SECURITY_INFORMATION, *PSECURITY_INFORMATION;
+typedef HANDLE PSECURITY_DESCRIPTOR;
+
 
 /* ========================================================================== */
 /* Structures: */
@@ -380,6 +383,36 @@ BOOL WINAPI FindCloseChangeNotification(
 /* File Misc: */
 DWORD WINAPI GetFileType(
         HANDLE hFile);
+
+/* ========================================================================== */
+/* Temp File: */
+UINT WINAPI GetTempFileNameW(
+    LPCWSTR lpPathName,
+    LPCWSTR lpPrefixString,
+    UINT    uUnique,
+    LPWSTR  lpTempFileName
+);
+
+DWORD WINAPI GetTempPathW(
+    DWORD  nBufferLength,
+    LPWSTR lpBuffer
+);
+
+/* ========================================================================== */
+/* File Security: */
+BOOL WINAPI GetFileSecurityA(
+    LPCSTR               lpFileName,
+    SECURITY_INFORMATION RequestedInformation,
+    PSECURITY_DESCRIPTOR pSecurityDescriptor,
+    DWORD                nLength,
+    LPDWORD              lpnLengthNeeded);
+BOOL WINAPI GetFileSecurityW(
+    LPCWSTR              lpFileName,
+    SECURITY_INFORMATION RequestedInformation,
+    PSECURITY_DESCRIPTOR pSecurityDescriptor,
+    DWORD                nLength,
+    LPDWORD              lpnLengthNeeded);
+
 
 #if defined(__cplusplus)
 }

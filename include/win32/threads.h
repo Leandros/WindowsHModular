@@ -58,6 +58,12 @@ extern "C" {
      SYNCHRONIZE | \
      0xFFFF)
 
+/* Semaphore Access Rights: */
+#define SEMAPHORE_ALL_ACCESS        0x1F0003
+#define SEMAPHORE_MODIFY_STATE      0x0002
+#define EVENT_ALL_ACCESS            0x1F0003
+#define EVENT_MODIFY_STATE          0x0002
+
 
 /* ========================================================================== */
 /* Structures: */
@@ -146,6 +152,17 @@ DWORD WINAPI WaitForMultipleObjects(
   const HANDLE *lpHandles,
         BOOL    bWaitAll,
         DWORD   dwMilliseconds);
+
+DWORD WINAPI WaitForSingleObjectEx(
+        HANDLE hHandle,
+        DWORD dwMilliseconds,
+        BOOL bAlertable);
+DWORD WINAPI WaitForMultipleObjectsEx(
+        DWORD nCount,
+  const HANDLE *lpHandles,
+        BOOL bWaitAll,
+        DWORD dwMilliseconds,
+        BOOL bAlertable);
 
 /* ========================================================================== */
 /* Threading Functions: */
@@ -243,6 +260,15 @@ BOOL WINAPI ReleaseSemaphore(
         HANDLE hSemaphore,
         LONG lReleaseCount,
         LPLONG lpPreviousCount);
+HANDLE WINAPI OpenSemaphoreA(
+        DWORD dwDesiredAccess,
+        BOOL bInheritHandle,
+        LPCSTR lpName);
+HANDLE WINAPI OpenSemaphoreW(
+        DWORD dwDesiredAccess,
+        BOOL bInheritHandle,
+        LPCWSTR lpName);
+
 
 /* ========================================================================== */
 /* Thread-Local Storage: */
@@ -273,6 +299,34 @@ BOOL WINAPI SleepConditionVariableSRW(
     PSRWLOCK            SRWLock,
     DWORD               dwMilliseconds,
     ULONG               Flags);
+
+/* ========================================================================== */
+/* Waiting: */
+BOOL  WINAPI WaitOnAddress(
+    void   volatile *Address,
+    PVOID           CompareAddress,
+    SIZE_T          AddressSize,
+    DWORD           dwMilliseconds);
+void  WINAPI WakeByAddressSingle(
+    PVOID Address);
+void  WINAPI WakeByAddressAll(
+    PVOID Address);
+
+/* ========================================================================== */
+/* Events: */
+HANDLE WINAPI CreateEvent(
+    LPSECURITY_ATTRIBUTES lpEventAttributes,
+    BOOL                  bManualReset,
+    BOOL                  bInitialState,
+    LPCTSTR               lpName);
+HANDLE WINAPI OpenEvent(
+    DWORD   dwDesiredAccess,
+    BOOL    bInheritHandle,
+    LPCTSTR lpName);
+BOOL WINAPI SetEvent(
+    HANDLE hEvent);
+BOOL WINAPI ResetEvent(
+    HANDLE hEvent);
 
 
 #if defined(__cplusplus)
