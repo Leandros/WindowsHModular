@@ -2106,6 +2106,9 @@ BOOL WINAPI RemoveDirectoryW(
 BOOL WINAPI GetFileSizeEx(
         HANDLE  hFile,
         PLARGE_INTEGER lpFileSize);
+BOOL WINAPI FlushViewOfFile(
+        LPCVOID lpBaseAddress,
+        SIZE_T  dwNumberOfBytesToFlush);
 
 
 /* ========================================================================== */
