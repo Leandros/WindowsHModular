@@ -973,6 +973,8 @@ typedef PEXCEPTION_POINTERS LPEXCEPTION_POINTERS;
 typedef LONG (WINAPI *PTOP_LEVEL_EXCEPTION_FILTER)(
         struct _EXCEPTION_POINTERS *ExceptionInfo);
 typedef PTOP_LEVEL_EXCEPTION_FILTER LPTOP_LEVEL_EXCEPTION_FILTER;
+typedef LONG (WINAPI *PVECTORED_EXCEPTION_HANDLER)(
+        struct _EXCEPTION_POINTERS *ExceptionInfo);
 
 /* Symbols: */
 typedef struct _SYMBOL_INFO {
@@ -1236,6 +1238,13 @@ LPTOP_LEVEL_EXCEPTION_FILTER WINAPI SetUnhandledExceptionFilter(
         LPTOP_LEVEL_EXCEPTION_FILTER    lpTopLevelExceptionFilter);
 LONG WINAPI UnhandledExceptionFilter(
         struct _EXCEPTION_POINTERS *    ExceptionInfo);
+
+PVOID WINAPI AddVectoredExceptionHandler(
+    ULONG                       FirstHandler,
+    PVECTORED_EXCEPTION_HANDLER VectoredHandler);
+
+ULONG WINAPI RemoveVectoredExceptionHandler(
+    PVOID Handler);
 
 #define CaptureStackBackTrace RtlCaptureStackBackTrace
 USHORT WINAPI RtlCaptureStackBackTrace(
