@@ -3786,7 +3786,13 @@ extern "C" {
 #define WAIT_TIMEOUT                258L
 
 /* TLS: */
+#ifndef TLS_OUT_OF_INDEXES
 #define TLS_OUT_OF_INDEXES          ((DWORD)0xFFFFFFFF)
+#endif
+#ifndef FLS_OUT_OF_INDEXES
+#define FLS_OUT_OF_INDEXES          ((DWORD)0xFFFFFFFF)
+#endif
+
 
 /* Thread creation flags: */
 #define CREATE_NEW_CONSOLE          0x00000010
