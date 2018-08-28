@@ -281,6 +281,13 @@ LPVOID WINAPI TlsGetValue(
 DWORD WINAPI TlsFree(
         DWORD   dwTlsIndex);
 
+typedef void(WINAPI *PFLS_CALLBACK_FUNCTION)(PVOID);
+DWORD WINAPI FlsAlloc(PFLS_CALLBACK_FUNCTION lpCallback);
+BOOL WINAPI FlsFree(DWORD dwFlsIndex);
+BOOL WINAPI FlsSetValue(DWORD dwFlsIndex, PVOID lpFlsData);
+PVOID WINAPI FlsGetValue(DWORD dwFlsIndex);
+
+
 /* ========================================================================== */
 /* SRW Lock Functions: */
 void WINAPI InitializeSRWLock(PSRWLOCK SRWLock);
