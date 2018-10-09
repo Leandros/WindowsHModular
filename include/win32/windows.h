@@ -300,9 +300,16 @@ typedef ACCESS_MASK         REGSAM;
 /* Errors: */
 /* ========================================================================== */
 #define ERROR_SUCCESS               0L
+#define ERROR_FILE_NOT_FOUND        2L
+#define ERROR_PATH_NOT_FOUND        3L
+#define ERROR_TOO_MANY_OPEN_FILES   4L
+#define ERROR_ACCESS_DENIED         5L
 #define ERROR_NO_MORE_FILES         18L
-#define ERROR_MORE_DATA             234L
+#define ERROR_SHARING_VIOLATION     32L
+#define ERROR_FILE_EXISTS           80L
 #define ERROR_INSUFFICIENT_BUFFER   122L
+#define ERROR_ALREADY_EXISTS        183L
+#define ERROR_MORE_DATA             234L
 
 
 /* ========================================================================== */
