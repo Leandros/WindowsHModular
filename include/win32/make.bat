@@ -29,6 +29,8 @@ type gdi.h >> windows.h
 echo: >> windows.h
 type io.h >> windows.h
 echo: >> windows.h
+type memory.h >> windows.h
+echo: >> windows.h
 type misc.h >> windows.h
 echo: >> windows.h
 type process.h >> windows.h
