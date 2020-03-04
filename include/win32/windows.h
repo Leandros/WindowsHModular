@@ -928,6 +928,18 @@ typedef struct DECLSPEC_ALIGN(16) _CONTEXT {
 } CONTEXT, *PCONTEXT;
 typedef PCONTEXT LPCONTEXT;
 #elif _WIN32
+typedef struct _FLOATING_SAVE_AREA
+{
+    ULONG ControlWord;
+    ULONG StatusWord;
+    ULONG TagWord;
+    ULONG ErrorOffset;
+    ULONG ErrorSelector;
+    ULONG DataOffset;
+    ULONG DataSelector;
+    UCHAR RegisterArea[80];
+    ULONG Cr0NpxState;
+} FLOATING_SAVE_AREA, *PFLOATING_SAVE_AREA;
 #define MAXIMUM_SUPPORTED_EXTENSION     512
 typedef struct _CONTEXT {
     DWORD ContextFlags;
