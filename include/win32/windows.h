@@ -43,6 +43,7 @@ extern "C" {
 /* Basic Defines: */
 #define NTAPI __stdcall
 #define WINAPI __stdcall
+#define APIENTRY __stdcall
 #define CALLBACK __stdcall
 #define TRUE (1)
 #define FALSE (0)
@@ -183,6 +184,7 @@ typedef unsigned int        UINT;
 typedef unsigned long       ULONG;
 typedef unsigned char       BYTE;
 typedef unsigned short      WORD;
+typedef float               FLOAT;
 typedef unsigned long       DWORD;
 #ifndef HAVE_WCHAR_T
 #define HAVE_WCHAR_T
@@ -196,6 +198,8 @@ typedef WORD                ATOM;
 typedef unsigned int        ULONG32;
 typedef uint64_t            DWORD64;
 typedef uint64_t            ULONG64;
+typedef signed int          INT32;
+typedef signed __int64      INT64;
 typedef uint64_t            DWORDLONG;
 
 typedef CHAR *              PCHAR;
@@ -211,6 +215,7 @@ typedef double              LONGLONG;
 typedef double              ULONGLONG;
 #endif
 
+typedef void                VOID;
 typedef void *              PVOID;
 typedef void *              LPVOID;
 typedef BOOL *              PBOOL;
@@ -224,9 +229,13 @@ typedef LPVOID              HANDLE;
 typedef HANDLE              HINSTANCE;
 typedef HANDLE              HWND;
 typedef HINSTANCE           HMODULE;
+typedef HANDLE              HDC;
+typedef HANDLE              HGLRC;
 typedef HANDLE              HMENU;
 typedef HANDLE *            PHANDLE;
 typedef HANDLE *            LPHANDLE;
+
+#define DECLARE_HANDLE(name) struct name##__{int unused;}; typedef struct name##__ *name
 
 typedef WCHAR *             PWSTR;
 typedef BYTE *              LPBYTE;
