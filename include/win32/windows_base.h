@@ -258,6 +258,16 @@ typedef LPCSTR              LPCTSTR;
 typedef LPSTR               LPTSTR;
 #endif
 
+#define MINCHAR             0x80
+#define MAXCHAR             0x7f
+#define MINSHORT            0x8000
+#define MAXSHORT            0x7fff
+#define MINLONG             0x80000000
+#define MAXLONG             0x7fffffff
+#define MAXBYTE             0xff
+#define MAXWORD             0xffff
+#define MAXDWORD            0xffffffff
+
 #if defined(_WIN64)
 typedef INT_PTR (WINAPI *FARPROC)(void);
 typedef INT_PTR (WINAPI *NEARPROC)(void);

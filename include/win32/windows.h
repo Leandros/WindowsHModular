@@ -267,6 +267,16 @@ typedef LPCSTR              LPCTSTR;
 typedef LPSTR               LPTSTR;
 #endif
 
+#define MINCHAR             0x80
+#define MAXCHAR             0x7f
+#define MINSHORT            0x8000
+#define MAXSHORT            0x7fff
+#define MINLONG             0x80000000
+#define MAXLONG             0x7fffffff
+#define MAXBYTE             0xff
+#define MAXWORD             0xffff
+#define MAXDWORD            0xffffffff
+
 #if defined(_WIN64)
 typedef INT_PTR (WINAPI *FARPROC)(void);
 typedef INT_PTR (WINAPI *NEARPROC)(void);
@@ -2076,6 +2086,28 @@ DWORD WINAPI GetFileAttributesA(
         LPCSTR lpFileName);
 DWORD WINAPI GetFileAttributesW(
         LPCWSTR lpFileName);
+
+typedef enum _GET_FILEEX_INFO_LEVELS {
+    GetFileExInfoStandard,
+    GetFileExMaxInfoLevel
+} GET_FILEEX_INFO_LEVELS;
+typedef struct _WIN32_FILE_ATTRIBUTE_DATA {
+    DWORD dwFileAttributes;
+    FILETIME ftCreationTime;
+    FILETIME ftLastAccessTime;
+    FILETIME ftLastWriteTime;
+    DWORD nFileSizeHigh;
+    DWORD nFileSizeLow;
+} WIN32_FILE_ATTRIBUTE_DATA, *LPWIN32_FILE_ATTRIBUTE_DATA;
+BOOL WINAPI GetFileAttributesExA(
+    LPCSTR lpFileName,
+    GET_FILEEX_INFO_LEVELS fInfoLevelId,
+    LPVOID lpFileInformation);
+BOOL WINAPI GetFileAttributesExW(
+    LPCWSTR lpFileName,
+    GET_FILEEX_INFO_LEVELS fInfoLevelId,
+    LPVOID lpFileInformation);
+
 BOOL WINAPI GetFileTime(
         HANDLE  hFile,
         LPFILETIME lpCreationTime,
@@ -2746,6 +2778,9 @@ BOOL WINAPI SystemTimeToFileTime(
 BOOL WINAPI FileTimeToSystemTime(
   const FILETIME *      lpFileTime,
         LPSYSTEMTIME    lpSystemTime);
+LONG WINAPI CompareFileTime(
+  const FILETIME *      lpFileTime1,
+  const FILETIME *      lpFileTime2);
 void WINAPI GetSystemTimeAsFileTime(
         LPFILETIME lpSystemTimeAsFileTime);
 BOOL WINAPI SystemTimeToTzSpecificLocalTime(
