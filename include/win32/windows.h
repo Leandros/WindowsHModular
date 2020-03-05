@@ -2848,6 +2848,14 @@ HMODULE WINAPI LoadLibraryA(
         LPCSTR lpFileName);
 HMODULE WINAPI LoadLibraryW(
         LPCWSTR lpFileName);
+HMODULE WINAPI LoadLibraryExA(
+        LPCSTR lpLibFileName,
+        HANDLE hFile,
+        DWORD  dwFlags);
+HMODULE WINAPI LoadLibraryExW(
+        LPCWSTR lpLibFileName,
+        HANDLE  hFile,
+        DWORD   dwFlags);
 FARPROC WINAPI GetProcAddress(
         HMODULE hModule,
         LPCSTR lProcName);
