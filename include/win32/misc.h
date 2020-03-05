@@ -169,6 +169,9 @@ BOOL WINAPI SystemTimeToFileTime(
 BOOL WINAPI FileTimeToSystemTime(
   const FILETIME *      lpFileTime,
         LPSYSTEMTIME    lpSystemTime);
+LONG WINAPI CompareFileTime(
+  const FILETIME *      lpFileTime1,
+  const FILETIME *      lpFileTime2);
 void WINAPI GetSystemTimeAsFileTime(
         LPFILETIME lpSystemTimeAsFileTime);
 BOOL WINAPI SystemTimeToTzSpecificLocalTime(
