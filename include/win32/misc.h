@@ -284,6 +284,57 @@ PVOID SecureZeroMemory(
         PVOID  ptr,
         SIZE_T cnt);
 
+VOID __stosb(
+        PBYTE  Destination,
+        BYTE  Value,
+        SIZE_T Count);
+
+VOID __stosw(
+        PWORD   Destination,
+        WORD   Value,
+        SIZE_T Count);
+
+VOID __stosd(
+        PDWORD Destination,
+        DWORD Value,
+        SIZE_T Count);
+
+VOID __stosq(
+        PDWORD64 Destination,
+        DWORD64 Value,
+        SIZE_T Count);
+
+#pragma intrinsic(__stosb)
+#pragma intrinsic(__stosw)
+#pragma intrinsic(__stosd)
+#pragma intrinsic(__stosq)
+
+FORCEINLINE PVOID SecureZeroMemory(
+        PVOID ptr,
+        SIZE_T cnt)
+{
+    volatile char* vptr = (volatile char*)ptr;
+
+#if defined(_M_AMD64)
+    __stosb((PBYTE)((DWORD64)vptr), 0, cnt);
+#else
+    while (cnt)
+    {
+#   if !defined(_M_CEE) && (defined(_M_ARM) || defined(_M_ARM64))
+        __iso_volatile_store8(vptr, 0);
+#   else
+        * vptr = 0;
+#   endif
+
+        vptr++;
+        cnt--;
+    }
+
+#endif // _M_AMD64
+
+    return ptr;
+}
+
 #if defined(__cplusplus)
 }
 #endif
