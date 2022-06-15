@@ -38,6 +38,13 @@ extern "C" {
 #define CALLBACK __stdcall
 #define TRUE (1)
 #define FALSE (0)
+#ifndef NULL
+#   ifdef __cplusplus
+#       define NULL __nullptr
+#   else
+#       define NULL ((void *)0)
+#   endif
+#endif
 #ifndef FORCEINLINE
 #define FORCEINLINE __forceinline
 #endif
@@ -195,6 +202,7 @@ typedef uint64_t            DWORDLONG;
 
 typedef CHAR *              PCHAR;
 typedef ULONG *             PULONG;
+typedef BYTE *              PBYTE;
 typedef ULONG64 *           PULONG64;
 typedef DWORD64 *           PDWORD64;
 
