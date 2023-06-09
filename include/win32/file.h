@@ -320,6 +320,9 @@ BOOL WINAPI GetFileAttributesExW(
     LPCWSTR lpFileName,
     GET_FILEEX_INFO_LEVELS fInfoLevelId,
     LPVOID lpFileInformation);
+BOOL SetFileAttributesA(LPCSTR lpFileName, DWORD dwFileAttributes);
+BOOL SetFileAttributesW(LPCWSTR lpFileName, DWORD dwFileAttributes);
+
 
 BOOL WINAPI GetFileTime(
         HANDLE  hFile,
@@ -437,6 +440,55 @@ BOOL WINAPI GetFileSecurityW(
     PSECURITY_DESCRIPTOR pSecurityDescriptor,
     DWORD                nLength,
     LPDWORD              lpnLengthNeeded);
+
+/* ========================================================================== */
+/* Directory Changes: */
+#define FILE_ACTION_ADDED 0x00000001
+#define FILE_ACTION_REMOVED 0x00000002
+#define FILE_ACTION_MODIFIED 0x00000003
+#define FILE_ACTION_RENAMED_OLD_NAME 0x00000004
+#define FILE_ACTION_RENAMED_NEW_NAME 0x00000005
+
+#define STATUS_WAIT_0                   ((DWORD)0x00000000L)
+#define STATUS_TIMEOUT                  ((DWORD)0x00000102L)
+#define STATUS_PENDING                  ((DWORD)0x00000103L)
+#define STILL_ACTIVE                    STATUS_PENDING
+
+#define FILE_FLAG_WRITE_THROUGH         0x80000000
+#define FILE_FLAG_OVERLAPPED            0x40000000
+#define FILE_FLAG_NO_BUFFERING          0x20000000
+#define FILE_FLAG_RANDOM_ACCESS         0x10000000
+#define FILE_FLAG_SEQUENTIAL_SCAN       0x08000000
+#define FILE_FLAG_DELETE_ON_CLOSE       0x04000000
+#define FILE_FLAG_BACKUP_SEMANTICS      0x02000000
+#define FILE_FLAG_POSIX_SEMANTICS       0x01000000
+#define FILE_FLAG_SESSION_AWARE         0x00800000
+#define FILE_FLAG_OPEN_REPARSE_POINT    0x00200000
+#define FILE_FLAG_OPEN_NO_RECALL        0x00100000
+#define FILE_FLAG_FIRST_PIPE_INSTANCE   0x00080000
+
+#define HasOverlappedIoCompleted(lpOverlapped) (((DWORD)(lpOverlapped)->Internal) != STATUS_PENDING)
+
+typedef VOID(WINAPI* LPOVERLAPPED_COMPLETION_ROUTINE)(DWORD dwErrorCode, DWORD dwNumberOfBytesTransfered, LPOVERLAPPED lpOverlapped);
+
+typedef struct FILE_NOTIFY_INFORMATION {
+  DWORD NextEntryOffset;
+  DWORD Action;
+  DWORD FileNameLength;
+  WCHAR FileName[1];
+} FILE_NOTIFY_INFORMATION;
+
+BOOL WINAPI ReadDirectoryChangesW(
+  HANDLE hDirectory,
+  LPVOID lpBuffer,
+  DWORD nBufferLength,
+  BOOL bWatchSubtree,
+  DWORD dwNotifyFilter,
+  LPDWORD lpBytesReturned,
+  LPOVERLAPPED lpOverlapped,
+  LPOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine
+);
+
 
 
 #if defined(__cplusplus)

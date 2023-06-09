@@ -279,11 +279,46 @@ BOOL WINAPI FlushInstructionCache(
 
 /* ========================================================================== */
 /* Pipe Functions: */
+#define PIPE_WAIT 0x00000000
+#define PIPE_NOWAIT 0x00000001
+#define PIPE_READMODE_BYTE 0x00000000
+#define PIPE_READMODE_MESSAGE 0x00000002
+#define PIPE_TYPE_BYTE 0x00000000
+#define PIPE_TYPE_MESSAGE 0x00000004
+#define PIPE_ACCEPT_REMOTE_CLIENTS 0x00000000
+#define PIPE_REJECT_REMOTE_CLIENTS 0x00000008
+
+#define PIPE_ACCESS_INBOUND 0x00000001
+#define PIPE_ACCESS_OUTBOUND 0x00000002
+#define PIPE_ACCESS_DUPLEX 0x00000003
+
+#define PIPE_UNLIMITED_INSTANCES 255
+#define ERROR_PIPE_BUSY 231L
+
+HANDLE WINAPI CreateNamedPipeA(
+        LPCSTR lpName,
+        DWORD dwOpenMode,
+        DWORD dwPipeMode,
+        DWORD nMaxInstances,
+        DWORD nOutBufferSize,
+        DWORD nInBufferSize,
+        DWORD nDefaultTimeOut,
+        LPSECURITY_ATTRIBUTES lpSecurityAttributes);
+HANDLE WINAPI CreateNamedPipeW(
+        LPCWSTR lpName,
+        DWORD dwOpenMode,
+        DWORD dwPipeMode,
+        DWORD nMaxInstances,
+        DWORD nOutBufferSize,
+        DWORD nInBufferSize,
+        DWORD nDefaultTimeOut,
+        LPSECURITY_ATTRIBUTES lpSecurityAttributes);
 BOOL WINAPI CreatePipe(
         PHANDLE hReadPipe,
         PHANDLE hWritePipe,
         LPSECURITY_ATTRIBUTES lpPipeAttributes,
         DWORD nSize);
+BOOL WINAPI ConnectNamedPipe(HANDLE hNamedPipe, LPOVERLAPPED lpOverlapped);
 BOOL WINAPI PeekNamedPipe(
         HANDLE  hNamedPipe,
         LPVOID  lpBuffer,
@@ -291,6 +326,8 @@ BOOL WINAPI PeekNamedPipe(
         LPDWORD lpBytesRead,
         LPDWORD lpTotalBytesAvail,
         LPDWORD lpBytesLeftThisMessage);
+BOOL WINAPI WaitNamedPipeA(LPCSTR lpNamedPipeName, DWORD nTimeOut);
+BOOL WINAPI WaitNamedPipeW(LPCWSTR lpNamedPipeName, DWORD nTimeOut);
 
 /* ========================================================================== */
 /* Path Functions: */
