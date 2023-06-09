@@ -373,6 +373,9 @@ void* __cdecl memset(
 #define FillMemory RtlFillMemory
 #define ZeroMemory RtlZeroMemory
 
+UINT WINAPI GetDoubleClickTime(VOID);
+BOOL WINAPI SetDoubleClickTime(UINT);
+
 #if defined(__cplusplus)
 }
 #endif
