@@ -154,6 +154,83 @@ extern "C" {
 typedef DWORD SECURITY_INFORMATION, *PSECURITY_INFORMATION;
 typedef HANDLE PSECURITY_DESCRIPTOR;
 
+/* Device IO: */
+#define FILE_DEVICE_FILE_SYSTEM         0x00000009
+
+#define METHOD_BUFFERED                 0
+#define METHOD_NEITHER                  3
+
+#define FILE_ANY_ACCESS                 0
+
+#define CTL_CODE(DeviceType, Function, Method, Access) (((DeviceType) << 16) | ((Access) << 14) | ((Function) << 2) | (Method))
+
+#define FSCTL_READ_FILE_USN_DATA            CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 58,  METHOD_NEITHER,  FILE_ANY_ACCESS)
+#define FSCTL_QUERY_USN_JOURNAL             CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 61,  METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define FSCTL_READ_UNPRIVILEGED_USN_JOURNAL CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 234, METHOD_NEITHER,  FILE_ANY_ACCESS)
+
+/* USN Reasons: */
+#define USN_REASON_DATA_OVERWRITE        0x00000001
+#define USN_REASON_DATA_EXTEND           0x00000002
+#define USN_REASON_DATA_TRUNCATION       0x00000004
+#define USN_REASON_NAMED_DATA_OVERWRITE  0x00000010
+#define USN_REASON_NAMED_DATA_EXTEND     0x00000020
+#define USN_REASON_NAMED_DATA_TRUNCATION 0x00000040
+#define USN_REASON_FILE_CREATE           0x00000100
+#define USN_REASON_FILE_DELETE           0x00000200
+#define USN_REASON_EA_CHANGE             0x00000400
+#define USN_REASON_SECURITY_CHANGE       0x00000800
+#define USN_REASON_RENAME_OLD_NAME       0x00001000
+#define USN_REASON_RENAME_NEW_NAME       0x00002000
+#define USN_REASON_INDEXABLE_CHANGE      0x00004000
+#define USN_REASON_BASIC_INFO_CHANGE     0x00008000
+#define USN_REASON_HARD_LINK_CHANGE      0x00010000
+#define USN_REASON_COMPRESSION_CHANGE    0x00020000
+#define USN_REASON_ENCRYPTION_CHANGE     0x00040000
+#define USN_REASON_OBJECT_ID_CHANGE      0x00080000
+#define USN_REASON_REPARSE_POINT_CHANGE  0x00100000
+#define USN_REASON_STREAM_CHANGE         0x00200000
+#define USN_REASON_TRANSACTED_CHANGE     0x00400000
+#define USN_REASON_INTEGRITY_CHANGE      0x00800000
+#define USN_REASON_DESIRED_STORAGE_CLASS_CHANGE 0x01000000
+#define USN_REASON_CLOSE                 0x80000000
+
+/* ========================================================================== */
+/* Enums: */
+typedef enum _FILE_ID_TYPE {
+    FileIdType,
+    ObjectIdType,
+    ExtendedFileIdType,
+    MaximumFileIdType
+} FILE_ID_TYPE, *PFILE_ID_TYPE;
+
+typedef enum _FILE_INFO_BY_HANDLE_CLASS {
+    FileBasicInfo,
+    FileStandardInfo,
+    FileNameInfo,
+    FileRenameInfo,
+    FileDispositionInfo,
+    FileAllocationInfo,
+    FileEndOfFileInfo,
+    FileStreamInfo,
+    FileCompressionInfo,
+    FileAttributeTagInfo,
+    FileIdBothDirectoryInfo,
+    FileIdBothDirectoryRestartInfo,
+    FileIoPriorityHintInfo,
+    FileRemoteProtocolInfo,
+    FileFullDirectoryInfo,
+    FileFullDirectoryRestartInfo,
+    FileStorageInfo,
+    FileAlignmentInfo,
+    FileIdInfo,
+    FileIdExtdDirectoryInfo,
+    FileIdExtdDirectoryRestartInfo,
+    FileDispositionInfoEx,
+    FileRenameInfoEx,
+    FileCaseSensitiveInfo,
+    FileNormalizedNameInfo,
+    MaximumFileInfoByHandleClass
+} FILE_INFO_BY_HANDLE_CLASS, *PFILE_INFO_BY_HANDLE_CLASS;
 
 /* ========================================================================== */
 /* Structures: */
@@ -196,6 +273,85 @@ typedef struct _WIN32_FIND_DATAW {
     WCHAR    cAlternateFileName[14];
 } WIN32_FIND_DATAW, *PWIN32_FIND_DATAW, *LPWIN32_FIND_DATAW;
 
+ typedef struct _FILE_ID_128 {
+    BYTE Identifier[16];
+} FILE_ID_128, *PFILE_ID_128;
+
+typedef struct FILE_ID_DESCRIPTOR {
+	DWORD        dwSize;
+	FILE_ID_TYPE Type;
+	union {
+		LARGE_INTEGER FileId;
+		GUID          ObjectId;
+		FILE_ID_128   ExtendedFileId;
+	};
+} FILE_ID_DESCRIPTOR, *LPFILE_ID_DESCRIPTOR;
+
+typedef struct _FILE_NAME_INFO {
+    DWORD FileNameLength;
+    WCHAR FileName[1];
+} FILE_NAME_INFO, *PFILE_NAME_INFO;
+
+typedef struct _FILE_ID_INFO {
+    ULONGLONG   VolumeSerialNumber;
+    FILE_ID_128 FileId;
+} FILE_ID_INFO, *PFILE_ID_INFO;
+
+typedef struct _FILE_ID_EXTD_DIR_INFO {
+    ULONG         NextEntryOffset;
+    ULONG         FileIndex;
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    LARGE_INTEGER EndOfFile;
+    LARGE_INTEGER AllocationSize;
+    ULONG         FileAttributes;
+    ULONG         FileNameLength;
+    ULONG         EaSize;
+    ULONG         ReparsePointTag;
+    FILE_ID_128   FileId;
+    WCHAR         FileName[1];
+} FILE_ID_EXTD_DIR_INFO, *PFILE_ID_EXTD_DIR_INFO;
+
+ typedef LONGLONG USN;
+typedef struct {
+    DWORDLONG UsnJournalID;
+    USN       FirstUsn;
+    USN       NextUsn;
+    USN       LowestValidUsn;
+    USN       MaxUsn;
+    DWORDLONG MaximumSize;
+    DWORDLONG AllocationDelta;
+} USN_JOURNAL_DATA_V0, *PUSN_JOURNAL_DATA_V0;
+
+typedef struct {
+    USN       StartUsn;
+    DWORD     ReasonMask;
+    DWORD     ReturnOnlyOnClose;
+    DWORDLONG Timeout;
+    DWORDLONG BytesToWaitFor;
+    DWORDLONG UsnJournalID;
+    WORD      MinMajorVersion;
+    WORD      MaxMajorVersion;
+} READ_USN_JOURNAL_DATA_V1, *PREAD_USN_JOURNAL_DATA_V1;
+
+typedef struct {
+    DWORD         RecordLength;
+    WORD          MajorVersion;
+    WORD          MinorVersion;
+    FILE_ID_128   FileReferenceNumber;
+    FILE_ID_128   ParentFileReferenceNumber;
+    USN           Usn;
+    LARGE_INTEGER TimeStamp;
+    DWORD         Reason;
+    DWORD         SourceInfo;
+    DWORD         SecurityId;
+    DWORD         FileAttributes;
+    WORD          FileNameLength;
+    WORD          FileNameOffset;
+    WCHAR         FileName[1];
+} USN_RECORD_V3, *PUSN_RECORD_V3;
 
 /* ========================================================================== */
 /* File I/O Functions: */
@@ -323,7 +479,6 @@ BOOL WINAPI GetFileAttributesExW(
 BOOL SetFileAttributesA(LPCSTR lpFileName, DWORD dwFileAttributes);
 BOOL SetFileAttributesW(LPCWSTR lpFileName, DWORD dwFileAttributes);
 
-
 BOOL WINAPI GetFileTime(
         HANDLE  hFile,
         LPFILETIME lpCreationTime,
@@ -374,6 +529,19 @@ BOOL WINAPI FlushViewOfFile(
         LPCVOID lpBaseAddress,
         SIZE_T  dwNumberOfBytesToFlush);
 
+HANDLE WINAPI OpenFileById (
+		HANDLE hVolumeHint,
+	    LPFILE_ID_DESCRIPTOR lpFileId,
+	    DWORD dwDesiredAccess,
+	    DWORD dwShareMode,
+	    LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+	    DWORD dwFlagsAndAttributes);
+
+BOOL WINAPI GetFileInformationByHandleEx(
+	    HANDLE hFile,
+	    FILE_INFO_BY_HANDLE_CLASS FileInformationClass,
+	    LPVOID lpFileInformation,
+	    DWORD dwBufferSize);
 
 /* ========================================================================== */
 /* File Iteration Functions: */
@@ -489,7 +657,17 @@ BOOL WINAPI ReadDirectoryChangesW(
   LPOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine
 );
 
-
+/* ========================================================================== */
+/* Device IO: */
+BOOL WINAPI DeviceIoControl(
+    HANDLE hDevice,
+    DWORD dwIoControlCode,
+    LPVOID lpInBuffer,
+    DWORD nInBufferSize,
+    LPVOID lpOutBuffer,
+    DWORD nOutBufferSize,
+    LPDWORD lpBytesReturned,
+    LPOVERLAPPED lpOverlapped);
 
 #if defined(__cplusplus)
 }
