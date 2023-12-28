@@ -263,6 +263,8 @@ typedef CHAR *              LPSTR;
 typedef WCHAR *             LPWSTR;
 typedef const CHAR *        LPCSTR;
 typedef const WCHAR *       LPCWSTR;
+typedef const WCHAR *       PCWSTR;
+
 #if defined(UNICODE)
 typedef WCHAR               TCHAR;
 typedef WCHAR               TBYTE;
