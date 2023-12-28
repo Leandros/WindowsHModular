@@ -376,6 +376,33 @@ void* __cdecl memset(
 UINT WINAPI GetDoubleClickTime(VOID);
 BOOL WINAPI SetDoubleClickTime(UINT);
 
+
+/* ========================================================================== */
+/* Locales: */
+#define LOCALE_NAME_INVARIANT               L""
+
+#define LCMAP_LOWERCASE                     0x00000100
+#define LCMAP_UPPERCASE						0x00000200
+
+typedef struct _nlsversioninfo {
+  DWORD dwNLSVersionInfoSize;
+  DWORD dwNLSVersion;
+  DWORD dwDefinedVersion;
+} NLSVERSIONINFO, *LPNLSVERSIONINFO;
+
+int WINAPI LCMapStringEx(
+  LPCWSTR          lpLocaleName,
+  DWORD            dwMapFlags,
+  LPCWSTR          lpSrcStr,
+  int              cchSrc,
+  LPWSTR           lpDestStr,
+  int              cchDest,
+  LPNLSVERSIONINFO lpVersionInformation,
+  LPVOID           lpReserved,
+  LPARAM           sortHandle
+);
+
+
 #if defined(__cplusplus)
 }
 #endif
