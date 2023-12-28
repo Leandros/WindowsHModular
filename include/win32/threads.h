@@ -204,6 +204,9 @@ BOOL WINAPI SetProcessAffinityMask(
         HANDLE    hProcess,
         DWORD_PTR dwProcessAffinityMask);
 BOOL WINAPI SwitchToThread(void);
+HRESULT WINAPI SetThreadDescription(
+        HANDLE hThread,
+        PCWSTR lpThreadDescription);
 
 /* ========================================================================== */
 /* CriticalSection Functions: */
