@@ -126,6 +126,10 @@ unsigned char _BitScanForward64(unsigned long * Index, unsigned __int64 Mask);
 
 
 /* ========================================================================== */
+/* Code Pages: */
+UINT WINAPI GetACP();
+
+/* ========================================================================== */
 /* UTF-16 <-> UTF-8 conversion Functions: */
 int WINAPI WideCharToMultiByte(
     UINT        CodePage,
