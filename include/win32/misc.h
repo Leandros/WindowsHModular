@@ -406,6 +406,30 @@ int WINAPI LCMapStringEx(
   LPARAM           sortHandle
 );
 
+/* ========================================================================== */
+/* Resources: */
+DECLARE_HANDLE(HRSRC);
+typedef HANDLE HGLOBAL;
+
+HRSRC WINAPI FindResourceA(
+  HMODULE hModule,
+  LPCSTR  lpName,
+  LPCSTR  lpType
+);
+
+DWORD WINAPI SizeofResource(
+  HMODULE hModule,
+  HRSRC   hResInfo
+);
+
+HGLOBAL WINAPI LoadResource(
+  HMODULE hModule,
+  HRSRC   hResInfo
+);
+
+LPVOID WINAPI LockResource(
+  HGLOBAL hResData
+);
 
 #if defined(__cplusplus)
 }
