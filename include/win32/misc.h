@@ -180,7 +180,7 @@ void WINAPI GetSystemTimeAsFileTime(
         LPFILETIME lpSystemTimeAsFileTime);
 BOOL WINAPI SystemTimeToTzSpecificLocalTime(
         LPTIME_ZONE_INFORMATION lpTimeZone,
-        LPSYSTEMTIME lpUniversalTime,
+  const SYSTEMTIME * lpUniversalTime,
         LPSYSTEMTIME lpLocalTime);
 DWORD timeGetTime(void);
 
