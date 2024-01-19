@@ -337,6 +337,29 @@ typedef struct {
 } READ_USN_JOURNAL_DATA_V1, *PREAD_USN_JOURNAL_DATA_V1;
 
 typedef struct {
+    DWORD     RecordLength;
+    WORD      MajorVersion;
+    WORD      MinorVersion;
+} USN_RECORD_COMMON_HEADER, *PUSN_RECORD_COMMON_HEADER;
+
+typedef struct {
+	DWORD         RecordLength;
+	WORD          MajorVersion;
+	WORD          MinorVersion;
+	DWORDLONG     FileReferenceNumber;
+	DWORDLONG     ParentFileReferenceNumber;
+	USN           Usn;
+	LARGE_INTEGER TimeStamp;
+	DWORD         Reason;
+	DWORD         SourceInfo;
+	DWORD         SecurityId;
+	DWORD         FileAttributes;
+	WORD          FileNameLength;
+	WORD          FileNameOffset;
+	WCHAR         FileName[1];
+} USN_RECORD_V2, *PUSN_RECORD_V2;
+
+typedef struct {
     DWORD         RecordLength;
     WORD          MajorVersion;
     WORD          MinorVersion;
