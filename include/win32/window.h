@@ -107,9 +107,10 @@ extern "C" {
 #define CW_USEDEFAULT               ((int)0x80000000)
 
 /* Class Styles: */
-#define CS_OWNDC                        0x0020
 #define CS_VREDRAW                      0x0001
 #define CS_HREDRAW                      0x0002
+#define CS_OWNDC                        0x0020
+#define CS_CLASSDC                      0x0040
 
 /* Messages: */
 #define PM_NOREMOVE                 0x0000
@@ -146,6 +147,8 @@ extern "C" {
 
 #define WM_ENTERSIZEMOVE            0x0231
 #define WM_EXITSIZEMOVE             0x0232
+
+#define WM_DPICHANGED               0x02E0
 
 #define WM_ACTIVATE                 0x0006
 #define WA_INACTIVE                 0
@@ -229,6 +232,34 @@ typedef struct tagWNDCLASS {
     LPCTSTR     lpszMenuName;
     LPCTSTR     lpszClassName;
 } WNDCLASS, *PWNDCLASS;
+typedef struct tagWNDCLASSEXA {
+	UINT        cbSize;
+	UINT        style;
+	WNDPROC     lpfnWndProc;
+	int         cbClsExtra;
+	int         cbWndExtra;
+	HINSTANCE   hInstance;
+	HICON       hIcon;
+	HCURSOR     hCursor;
+	HBRUSH      hbrBackground;
+	LPCSTR      lpszMenuName;
+	LPCSTR      lpszClassName;
+	HICON       hIconSm;
+} WNDCLASSEXA, *PWNDCLASSEXA, *NPWNDCLASSEXA, *LPWNDCLASSEXA;
+typedef struct tagWNDCLASSEXW {
+	UINT        cbSize;
+	UINT        style;
+	WNDPROC     lpfnWndProc;
+	int         cbClsExtra;
+	int         cbWndExtra;
+	HINSTANCE   hInstance;
+	HICON       hIcon;
+	HCURSOR     hCursor;
+	HBRUSH      hbrBackground;
+	LPCWSTR     lpszMenuName;
+	LPCWSTR     lpszClassName;
+	HICON       hIconSm;
+} WNDCLASSEXW, *PWNDCLASSEXW, *NPWNDCLASSEXW, *LPWNDCLASSEXW;
 
 /* Messages: */
 typedef struct tagPOINT {
@@ -262,6 +293,10 @@ ATOM WINAPI RegisterClassA(
         WNDCLASS *lpWndClass);
 ATOM WINAPI RegisterClassW(
         WNDCLASS *lpWndClass);
+ATOM WINAPI RegisterClassExA(
+        const WNDCLASSEXA *unnamedParam1);
+ATOM WINAPI RegisterClassExW(
+        const WNDCLASSEXW *unnamedParam1);
 BOOL WINAPI UnregisterClassA(
         LPCSTR  lpClassName,
         HINSTANCE hInstance);
@@ -321,6 +356,14 @@ BOOL WINAPI GetClientRect(
         LPRECT  lpRect);
 int WINAPI GetSystemMetrics(
         int     nIndex);
+BOOL WINAPI SetWindowPos(
+        HWND    hWnd,
+        HWND    hWndInsertAfter,
+        int     X,
+        int     Y,
+        int     cx,
+        int     cy,
+        UINT    uFlags);
 
 /* ========================================================================== */
 /* Message Queue: */
