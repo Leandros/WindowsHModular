@@ -206,6 +206,8 @@ DWORD WINAPI GetEnvironmentVariableW(
 BOOL WINAPI DisableThreadLibraryCalls(
         HMODULE hModule);
 DWORD WINAPI GetLastError(void);
+VOID WINAPI SetLastError(
+        DWORD dwErrCode);
 void WINAPI Sleep(
         DWORD dwMilliseconds);
 DWORD WINAPI SleepEx(
