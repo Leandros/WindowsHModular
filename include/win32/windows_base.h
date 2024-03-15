@@ -331,6 +331,7 @@ typedef ACCESS_MASK         REGSAM;
 #define ERROR_INSUFFICIENT_BUFFER   122L
 #define ERROR_ALREADY_EXISTS        183L
 #define ERROR_MORE_DATA             234L
+#define ERROR_CANT_ACCESS_FILE      1920L
 
 
 /* ========================================================================== */
