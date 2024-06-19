@@ -4337,9 +4337,17 @@ extern "C" {
 #define VK_SHIFT                        0x10
 #define VK_CONTROL                      0x11
 #define VK_MENU                         0x12
-#define VK_RETURN                       0x0D
+#define VK_PAUSE                        0x13
+#define VK_CAPITAL                      0x14
 
 #define VK_ESCAPE                       0x1B
+#define VK_Clear                        0x0C
+#define VK_RETURN                       0x0D
+#define VK_MODECHANGE                   0x1F
+
+#define VK_CONVERT                      0x1C
+#define VK_NONCONVERT                   0x1D
+#define VK_ACCEPT                       0x1E
 
 #define VK_SPACE                        0x20
 #define VK_PRIOR                        0x21
@@ -4361,6 +4369,20 @@ extern "C" {
 #define VK_LWIN                         0x5B
 #define VK_RWIN                         0x5C
 #define VK_PROCESSKEY                   0xE5
+#define VK_APPS                         0x5D
+#define VK_SLEEP                        0x5F
+
+#define VK_NUMPAD0                      0x60
+
+#define VK_MULTIPLY                     0x6A
+#define VK_ADD                          0x6B
+#define VK_SEPARATOR                    0x6C
+#define VK_SUBTRACT                     0x6D
+#define VK_DECIMAL                      0x6E
+#define VK_DIVIDE                       0x6F
+
+#define VK_F1                           0x70
+#define VK_NUMLOCK                      0x90
 
 
 /* ========================================================================== */
