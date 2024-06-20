@@ -5,6 +5,22 @@
 #ifndef WINDOWS_H
 #define WINDOWS_H
 
+#if !defined(_WIN32) || !defined(_WIN64)
+    #define _XOPEN_SOURCE 700 // or a suitable version number
+    #include "ucontext.h"
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+
+    #define pContext        PCONTEXT
+
+#else
+
+    #define pContext        ucontext_t
+
+#endif
+
+
 
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -46,9 +62,15 @@ extern "C" {
 #define CALLBACK __stdcall
 #define TRUE (1)
 #define FALSE (0)
+
 #ifndef FORCEINLINE
-#define FORCEINLINE __forceinline
+    #if defined(_WIN32) || defined(_WIN64)
+        #define FORCEINLINE         __forceinline
+    #else
+        #define FORCEINLINE         __attribute__((always_inline))
+    #endif
 #endif
+
 #ifdef UNICODE
 #define __TEXT(x) L ## x
 #define TEXT(x) __TEXT(x)
@@ -198,7 +220,13 @@ typedef unsigned int        ULONG32;
 typedef uint64_t            DWORD64;
 typedef uint64_t            ULONG64;
 typedef signed int          INT32;
-typedef signed __int64      INT64;
+
+#if defined(_WIN32) || defined(_WIN64)
+    typedef signed __int64      INT64;
+#else
+    #define signed __int64      int64_t;
+#endif
+
 typedef uint64_t            DWORDLONG;
 
 typedef CHAR *              PCHAR;
@@ -1004,7 +1032,7 @@ typedef struct _EXCEPTION_RECORD {
 } EXCEPTION_RECORD, *PEXCEPTION_RECORD;
 typedef struct _EXCEPTION_POINTERS {
     PEXCEPTION_RECORD   ExceptionRecord;
-    PCONTEXT            ContextRecord;
+    pContext            ContextRecord;
 } EXCEPTION_POINTERS, *PEXCEPTION_POINTERS;
 typedef PEXCEPTION_POINTERS LPEXCEPTION_POINTERS;
 typedef LONG (WINAPI *PTOP_LEVEL_EXCEPTION_FILTER)(
@@ -1147,8 +1175,12 @@ void WINAPI OutputDebugStringA(
 void WINAPI OutputDebugStringW(
         LPCWSTR lpOutputString);
 BOOL WINAPI GetThreadContext(
-        HANDLE      hThread,
-        LPCONTEXT   lpContext);
+        HANDLE      hThread
+#if defined(_WIN32) || defined(_WIN64)
+// FIXME: Find LPCONTEXT Alternative
+    , LPCONTEXT   lpContext
+#endif
+);
 BOOL WINAPI DebugActiveProcess(
         DWORD       dwProcessId);
 BOOL WINAPI DebugActiveProcessStop(
@@ -1290,7 +1322,7 @@ USHORT WINAPI RtlCaptureStackBackTrace(
         PVOID *     BackTrace,
         PULONG      BackTraceHash);
 void WINAPI RtlCaptureContext(
-        PCONTEXT    ContextRecord);
+        pContext    ContextRecord);
 void WINAPI RaiseException(
         DWORD       dwExceptionCode,
         DWORD       dwExceptionFlags,
@@ -1405,7 +1437,10 @@ typedef struct _MINIDUMP_EXCEPTION_INFORMATION64 {
 typedef struct _MINIDUMP_THREAD_CALLBACK {
     ULONG ThreadId;
     HANDLE ThreadHandle;
+#if defined(_WIN32) || defined(_WIN64)
+// TODO: Find CONTEXT alternative
     CONTEXT Context;
+#endif
     ULONG SizeOfContext;
     ULONG64 StackBase;
     ULONG64 StackEnd;
@@ -1413,7 +1448,9 @@ typedef struct _MINIDUMP_THREAD_CALLBACK {
 typedef struct _MINIDUMP_THREAD_EX_CALLBACK {
     ULONG ThreadId;
     HANDLE ThreadHandle;
+#if defined(_WIN32) || defined(_WIN64)
     CONTEXT Context;
+#endif
     ULONG SizeOfContext;
     ULONG64 StackBase;
     ULONG64 StackEnd;
@@ -1566,7 +1603,7 @@ unsigned __int64    __readgsqword(unsigned long Offset);
 unsigned char       __readfsbyte(unsigned long Offset);
 unsigned short      __readfsword(unsigned long Offset);
 unsigned long       __readfsdword(unsigned long Offset);
-unsigned __int64    __readfsqword(unsigned long Offset);
+uint64_t            __readfsqword(unsigned long Offset);
 #endif
 
 static NT_TIB *
@@ -2451,7 +2488,11 @@ typedef struct _MEMORY_BASIC_INFORMATION32 {
     DWORD       Type;
 } MEMORY_BASIC_INFORMATION32, *PMEMORY_BASIC_INFORMATION32;
 
+#if defined(_WIN32) || defined(_WIN64)
 typedef struct __declspec(align(16)) _MEMORY_BASIC_INFORMATION64 {
+#else
+typedef struct __attribute__((aligned(16))) _MEMORY_BASIC_INFORMATION64 {
+#endif
     ULONGLONG   BaseAddress;
     ULONGLONG   AllocationBase;
     DWORD       AllocationProtect;
@@ -2743,15 +2784,15 @@ typedef PTIME_ZONE_INFORMATION LPTIME_ZONE_INFORMATION;
                                 (((unsigned __int64)(x) >> 40) & 0xff00ULL) | \
                                 ((unsigned __int64)(x)  >> 56))
 #else
-unsigned short   __cdecl _byteswap_ushort(unsigned short   Number);
-unsigned long    __cdecl _byteswap_ulong (unsigned long    Number);
-unsigned __int64 __cdecl _byteswap_uint64(unsigned __int64 Number);
+unsigned short  __cdecl _byteswap_ushort(unsigned short   Number);
+unsigned long   __cdecl _byteswap_ulong (unsigned long    Number);
+uint64_t        __cdecl _byteswap_uint64(uint64_t Number);
 #endif
 
-unsigned int _rotl(unsigned int value, int shift);
-unsigned __int64 _rotl64(unsigned __int64 value, int shift);
-unsigned char _BitScanForward(unsigned long * Index, unsigned long Mask);
-unsigned char _BitScanForward64(unsigned long * Index, unsigned __int64 Mask);
+unsigned int    _rotl(unsigned int value, int shift);
+uint64_t        _rotl64(uint64_t value, int shift);
+unsigned char   _BitScanForward(unsigned long * Index, unsigned long Mask);
+unsigned char   _BitScanForward64(unsigned long * Index, uint64_t Mask);
 
 
 /* ========================================================================== */
@@ -5040,7 +5081,7 @@ GetCurrentFiber(void)
 }
 #endif
 
-__forceinline PVOID
+FORCEINLINE PVOID
 GetFiberData(void)
 {
     return *(PVOID *)GetCurrentFiber();
