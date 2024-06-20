@@ -56,10 +56,23 @@ extern "C" {
 #define DECLSPEC_ALIGN(x)   __declspec(align(x))
 
 /* Basic Defines: */
-#define NTAPI __stdcall
-#define WINAPI __stdcall
-#define APIENTRY __stdcall
-#define CALLBACK __stdcall
+#ifdef _WIN32
+
+    #define NTAPI __stdcall
+    #define WINAPI __stdcall
+    #define APIENTRY __stdcall
+    #define CALLBACK __stdcall
+
+#else
+// FIXME: Best solution is to keep it empty?
+// Warning: __stdcall' calling convention is not supported for this target
+    #define NTAPI
+    #define WINAPI
+    #define APIENTRY
+    #define CALLBACK
+
+#endif
+
 #define TRUE (1)
 #define FALSE (0)
 
@@ -1343,22 +1356,22 @@ BOOL WINAPI Thread32Next(
 
 /* ========================================================================== */
 /* Stack Walking: */
-typedef BOOL (__stdcall *PREAD_PROCESS_MEMORY_ROUTINE64)(
+typedef BOOL (WINAPI *PREAD_PROCESS_MEMORY_ROUTINE64)(
         HANDLE hProcess,
         DWORD64 qwBaseAddress,
         PVOID lpBuffer,
         DWORD nSize,
         LPDWORD lpNumberOfBytesRead);
 
-typedef PVOID (__stdcall *PFUNCTION_TABLE_ACCESS_ROUTINE64)(
+typedef PVOID (WINAPI *PFUNCTION_TABLE_ACCESS_ROUTINE64)(
         HANDLE ahProcess,
         DWORD64 AddrBase);
 
-typedef DWORD64 (__stdcall *PGET_MODULE_BASE_ROUTINE64)(
+typedef DWORD64 (WINAPI *PGET_MODULE_BASE_ROUTINE64)(
         HANDLE hProcess,
         DWORD64 Address);
 
-typedef DWORD64 (__stdcall *PTRANSLATE_ADDRESS_ROUTINE64)(
+typedef DWORD64 (WINAPI *PTRANSLATE_ADDRESS_ROUTINE64)(
         HANDLE hProcess,
         HANDLE hThread,
         LPADDRESS64 lpaddr);
