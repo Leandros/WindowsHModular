@@ -11,16 +11,10 @@
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
-
     #define pContext        PCONTEXT
-
 #else
-
     #define pContext        ucontext_t
-
 #endif
-
-
 
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
