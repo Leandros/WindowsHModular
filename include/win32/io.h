@@ -22,7 +22,6 @@ extern "C" {
 #define STD_INPUT_HANDLE        ((DWORD)-10)
 #define STD_OUTPUT_HANDLE       ((DWORD)-11)
 #define STD_ERROR_HANDLE        ((DWORD)-12)
-#define INVALID_HANDLE_VALUE    ((HANDLE)(LONG_PTR)-1)
 #define ATTACH_PARENT_PROCESS   ((DWORD)-1)
 
 #define HANDLE_FLAG_INHERIT             0x00000001
