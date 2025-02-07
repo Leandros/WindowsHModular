@@ -234,6 +234,7 @@ typedef HANDLE              HMENU;
 typedef HANDLE *            PHANDLE;
 typedef HANDLE *            LPHANDLE;
 
+#define INVALID_HANDLE_VALUE    ((HANDLE)(LONG_PTR)-1)
 #define DECLARE_HANDLE(name) struct name##__{int unused;}; typedef struct name##__ *name
 
 typedef WCHAR *             PWSTR;
@@ -347,6 +348,19 @@ typedef ACCESS_MASK         REGSAM;
 /* ========================================================================== */
 /* Structures: */
 /* ========================================================================== */
+typedef struct _OVERLAPPED {
+    ULONG_PTR Internal;
+    ULONG_PTR InternalHigh;
+    union {
+        struct {
+            DWORD Offset;
+            DWORD OffsetHigh;
+        };
+        PVOID Pointer;
+    };
+    HANDLE hEvent;
+} OVERLAPPED, *LPOVERLAPPED;
+
 typedef struct _SECURITY_ATTRIBUTES {
     DWORD           nLength;
     LPVOID          lpSecurityDescriptor;

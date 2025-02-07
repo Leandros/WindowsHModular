@@ -194,6 +194,11 @@ typedef HANDLE PSECURITY_DESCRIPTOR;
 #define USN_REASON_DESIRED_STORAGE_CLASS_CHANGE 0x01000000
 #define USN_REASON_CLOSE                 0x80000000
 
+/* File Iterations Flags: */
+#define FIND_FIRST_EX_CASE_SENSITIVE        0x00000001
+#define FIND_FIRST_EX_LARGE_FETCH           0x00000002
+#define FIND_FIRST_EX_ON_DISK_ENTRIES_ONLY  0x00000004
+
 /* ========================================================================== */
 /* Enums: */
 typedef enum _FILE_ID_TYPE {
@@ -232,20 +237,21 @@ typedef enum _FILE_INFO_BY_HANDLE_CLASS {
     MaximumFileInfoByHandleClass
 } FILE_INFO_BY_HANDLE_CLASS, *PFILE_INFO_BY_HANDLE_CLASS;
 
+typedef enum _FINDEX_INFO_LEVELS {
+    FindExInfoStandard,
+    FindExInfoBasic,
+    FindExInfoMaxInfoLevel
+} FINDEX_INFO_LEVELS;
+
+typedef enum _FINDEX_SEARCH_OPS {
+    FindExSearchNameMatch,
+    FindExSearchLimitToDirectories,
+    FindExSearchLimitToDevices,
+    FindExSearchMaxSearchOp
+} FINDEX_SEARCH_OPS;
+
 /* ========================================================================== */
 /* Structures: */
-typedef struct _OVERLAPPED {
-    ULONG_PTR Internal;
-    ULONG_PTR InternalHigh;
-    union {
-        struct {
-            DWORD Offset;
-            DWORD OffsetHigh;
-        };
-        PVOID Pointer;
-    };
-    HANDLE hEvent;
-} OVERLAPPED, *LPOVERLAPPED;
 
 /* File Iteration: */
 typedef struct _WIN32_FIND_DATAA {
@@ -278,13 +284,13 @@ typedef struct _WIN32_FIND_DATAW {
 } FILE_ID_128, *PFILE_ID_128;
 
 typedef struct FILE_ID_DESCRIPTOR {
-	DWORD        dwSize;
-	FILE_ID_TYPE Type;
-	union {
-		LARGE_INTEGER FileId;
-		GUID          ObjectId;
-		FILE_ID_128   ExtendedFileId;
-	};
+    DWORD        dwSize;
+    FILE_ID_TYPE Type;
+    union {
+        LARGE_INTEGER FileId;
+        GUID          ObjectId;
+        FILE_ID_128   ExtendedFileId;
+    };
 } FILE_ID_DESCRIPTOR, *LPFILE_ID_DESCRIPTOR;
 
 typedef struct _FILE_BASIC_INFO {
@@ -351,20 +357,20 @@ typedef struct {
 } USN_RECORD_COMMON_HEADER, *PUSN_RECORD_COMMON_HEADER;
 
 typedef struct {
-	DWORD         RecordLength;
-	WORD          MajorVersion;
-	WORD          MinorVersion;
-	DWORDLONG     FileReferenceNumber;
-	DWORDLONG     ParentFileReferenceNumber;
-	USN           Usn;
-	LARGE_INTEGER TimeStamp;
-	DWORD         Reason;
-	DWORD         SourceInfo;
-	DWORD         SecurityId;
-	DWORD         FileAttributes;
-	WORD          FileNameLength;
-	WORD          FileNameOffset;
-	WCHAR         FileName[1];
+    DWORD         RecordLength;
+    WORD          MajorVersion;
+    WORD          MinorVersion;
+    DWORDLONG     FileReferenceNumber;
+    DWORDLONG     ParentFileReferenceNumber;
+    USN           Usn;
+    LARGE_INTEGER TimeStamp;
+    DWORD         Reason;
+    DWORD         SourceInfo;
+    DWORD         SecurityId;
+    DWORD         FileAttributes;
+    WORD          FileNameLength;
+    WORD          FileNameOffset;
+    WCHAR         FileName[1];
 } USN_RECORD_V2, *PUSN_RECORD_V2;
 
 typedef struct {
@@ -561,18 +567,18 @@ BOOL WINAPI FlushViewOfFile(
         SIZE_T  dwNumberOfBytesToFlush);
 
 HANDLE WINAPI OpenFileById (
-		HANDLE hVolumeHint,
-	    LPFILE_ID_DESCRIPTOR lpFileId,
-	    DWORD dwDesiredAccess,
-	    DWORD dwShareMode,
-	    LPSECURITY_ATTRIBUTES lpSecurityAttributes,
-	    DWORD dwFlagsAndAttributes);
+        HANDLE hVolumeHint,
+        LPFILE_ID_DESCRIPTOR lpFileId,
+        DWORD dwDesiredAccess,
+        DWORD dwShareMode,
+        LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+        DWORD dwFlagsAndAttributes);
 
 BOOL WINAPI GetFileInformationByHandleEx(
-	    HANDLE hFile,
-	    FILE_INFO_BY_HANDLE_CLASS FileInformationClass,
-	    LPVOID lpFileInformation,
-	    DWORD dwBufferSize);
+        HANDLE hFile,
+        FILE_INFO_BY_HANDLE_CLASS FileInformationClass,
+        LPVOID lpFileInformation,
+        DWORD dwBufferSize);
 
 /* ========================================================================== */
 /* File Iteration Functions: */
@@ -582,6 +588,20 @@ HANDLE WINAPI FindFirstFileA(
 HANDLE WINAPI FindFirstFileW(
         LPCWSTR lpFileName,
         LPWIN32_FIND_DATAW lpFindFileData);
+HANDLE WINAPI FindFirstFileExA(
+        LPCSTR lpFileName,
+        FINDEX_INFO_LEVELS fInfoLevelId,
+        LPVOID lpFindFileData,
+        FINDEX_SEARCH_OPS fSearchOp,
+        LPVOID lpSearchFilter,
+        DWORD dwAdditionalFlags);
+HANDLE WINAPI FindFirstFileExW(
+        LPCWSTR lpFileName,
+        FINDEX_INFO_LEVELS fInfoLevelId,
+        LPVOID lpFindFileData,
+        FINDEX_SEARCH_OPS fSearchOp,
+        LPVOID lpSearchFilter,
+        DWORD dwAdditionalFlags);
 BOOL WINAPI FindNextFileA(
         HANDLE hFindFile,
         LPWIN32_FIND_DATAA lpFindFileData);
