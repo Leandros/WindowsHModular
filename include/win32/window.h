@@ -373,11 +373,16 @@ BOOL WINAPI SetWindowPos(
         int     cx,
         int     cy,
         UINT    uFlags);
+LONG WINAPI GetWindowLongA(
+        HWND hWnd,
+        int nIndex);
+LONG WINAPI GetWindowLongW(
+        HWND hWnd,
+        int nIndex);
 LONG WINAPI SetWindowLongA(
         HWND hWnd,
         int nIndex,
         LONG dwNewLong);
-		WINUSERAPI
 LONG WINAPI SetWindowLongW(
         HWND hWnd,
         int nIndex,
@@ -388,6 +393,14 @@ LONG_PTR WINAPI GetWindowLongPtrA(
 LONG_PTR WINAPI GetWindowLongPtrW(
         HWND hWnd,
         int nIndex);
+LONG_PTR WINAPI SetWindowLongPtrA(
+        HWND hWnd,
+        int nIndex,
+        LONG_PTR dwNewLong);
+LONG_PTR WINAPI SetWindowLongPtrW(
+        HWND hWnd,
+        int nIndex,
+        LONG_PTR dwNewLong);
 
 /* ========================================================================== */
 /* Message Queue: */
