@@ -209,6 +209,15 @@ extern "C" {
 #define SW_FORCEMINIMIZE    11
 #define SW_MAX              11
 
+/* Get/SetWindowLong Indices: */
+
+#define GWLP_WNDPROC        -4
+#define GWLP_HINSTANCE      -6
+#define GWLP_HWNDPARENT     -8
+#define GWL_STYLE           -16
+#define GWLP_USERDATA       -21
+#define GWLP_ID             -12
+
 /* ========================================================================== */
 /* Structures:                                                                */
 typedef struct _RECT {
@@ -364,6 +373,21 @@ BOOL WINAPI SetWindowPos(
         int     cx,
         int     cy,
         UINT    uFlags);
+LONG WINAPI SetWindowLongA(
+        HWND hWnd,
+        int nIndex,
+        LONG dwNewLong);
+		WINUSERAPI
+LONG WINAPI SetWindowLongW(
+        HWND hWnd,
+        int nIndex,
+        LONG dwNewLong);
+LONG_PTR WINAPI GetWindowLongPtrA(
+        HWND hWnd,
+        int nIndex);
+LONG_PTR WINAPI GetWindowLongPtrW(
+        HWND hWnd,
+        int nIndex);
 
 /* ========================================================================== */
 /* Message Queue: */
