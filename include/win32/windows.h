@@ -5,6 +5,16 @@
 #ifndef WINDOWS_H
 #define WINDOWS_H
 
+#if !defined(_WIN32) || !defined(_WIN64)
+    #define _XOPEN_SOURCE 700 // or a suitable version number
+    #include "ucontext.h"
+#endif
+
+#if defined(_WIN32) || defined(_WIN64)
+    #define pContext        PCONTEXT
+#else
+    #define pContext        ucontext_t
+#endif
 
 /*
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -40,15 +50,34 @@ extern "C" {
 #define DECLSPEC_ALIGN(x)   __declspec(align(x))
 
 /* Basic Defines: */
-#define NTAPI __stdcall
-#define WINAPI __stdcall
-#define APIENTRY __stdcall
-#define CALLBACK __stdcall
+#ifdef _WIN32
+
+    #define NTAPI __stdcall
+    #define WINAPI __stdcall
+    #define APIENTRY __stdcall
+    #define CALLBACK __stdcall
+
+#else
+// FIXME: Best solution is to keep it empty?
+// Warning: __stdcall' calling convention is not supported for this target
+    #define NTAPI
+    #define WINAPI
+    #define APIENTRY
+    #define CALLBACK
+
+#endif
+
 #define TRUE (1)
 #define FALSE (0)
+
 #ifndef FORCEINLINE
-#define FORCEINLINE __forceinline
+    #if defined(_WIN32) || defined(_WIN64)
+        #define FORCEINLINE         __forceinline
+    #else
+        #define FORCEINLINE         __attribute__((always_inline))
+    #endif
 #endif
+
 #ifdef UNICODE
 #define __TEXT(x) L ## x
 #define TEXT(x) __TEXT(x)
@@ -198,7 +227,13 @@ typedef unsigned int        ULONG32;
 typedef uint64_t            DWORD64;
 typedef uint64_t            ULONG64;
 typedef signed int          INT32;
-typedef signed __int64      INT64;
+
+#if defined(_WIN32) || defined(_WIN64)
+    typedef signed __int64      INT64;
+#else
+    #define signed __int64      int64_t;
+#endif
+
 typedef uint64_t            DWORDLONG;
 
 typedef CHAR *              PCHAR;
@@ -1004,7 +1039,7 @@ typedef struct _EXCEPTION_RECORD {
 } EXCEPTION_RECORD, *PEXCEPTION_RECORD;
 typedef struct _EXCEPTION_POINTERS {
     PEXCEPTION_RECORD   ExceptionRecord;
-    PCONTEXT            ContextRecord;
+    pContext            ContextRecord;
 } EXCEPTION_POINTERS, *PEXCEPTION_POINTERS;
 typedef PEXCEPTION_POINTERS LPEXCEPTION_POINTERS;
 typedef LONG (WINAPI *PTOP_LEVEL_EXCEPTION_FILTER)(
@@ -1147,8 +1182,12 @@ void WINAPI OutputDebugStringA(
 void WINAPI OutputDebugStringW(
         LPCWSTR lpOutputString);
 BOOL WINAPI GetThreadContext(
-        HANDLE      hThread,
-        LPCONTEXT   lpContext);
+        HANDLE      hThread
+#if defined(_WIN32) || defined(_WIN64)
+// FIXME: Find LPCONTEXT Alternative
+    , LPCONTEXT   lpContext
+#endif
+);
 BOOL WINAPI DebugActiveProcess(
         DWORD       dwProcessId);
 BOOL WINAPI DebugActiveProcessStop(
@@ -1290,7 +1329,7 @@ USHORT WINAPI RtlCaptureStackBackTrace(
         PVOID *     BackTrace,
         PULONG      BackTraceHash);
 void WINAPI RtlCaptureContext(
-        PCONTEXT    ContextRecord);
+        pContext    ContextRecord);
 void WINAPI RaiseException(
         DWORD       dwExceptionCode,
         DWORD       dwExceptionFlags,
@@ -1311,22 +1350,22 @@ BOOL WINAPI Thread32Next(
 
 /* ========================================================================== */
 /* Stack Walking: */
-typedef BOOL (__stdcall *PREAD_PROCESS_MEMORY_ROUTINE64)(
+typedef BOOL (WINAPI *PREAD_PROCESS_MEMORY_ROUTINE64)(
         HANDLE hProcess,
         DWORD64 qwBaseAddress,
         PVOID lpBuffer,
         DWORD nSize,
         LPDWORD lpNumberOfBytesRead);
 
-typedef PVOID (__stdcall *PFUNCTION_TABLE_ACCESS_ROUTINE64)(
+typedef PVOID (WINAPI *PFUNCTION_TABLE_ACCESS_ROUTINE64)(
         HANDLE ahProcess,
         DWORD64 AddrBase);
 
-typedef DWORD64 (__stdcall *PGET_MODULE_BASE_ROUTINE64)(
+typedef DWORD64 (WINAPI *PGET_MODULE_BASE_ROUTINE64)(
         HANDLE hProcess,
         DWORD64 Address);
 
-typedef DWORD64 (__stdcall *PTRANSLATE_ADDRESS_ROUTINE64)(
+typedef DWORD64 (WINAPI *PTRANSLATE_ADDRESS_ROUTINE64)(
         HANDLE hProcess,
         HANDLE hThread,
         LPADDRESS64 lpaddr);
@@ -1405,7 +1444,10 @@ typedef struct _MINIDUMP_EXCEPTION_INFORMATION64 {
 typedef struct _MINIDUMP_THREAD_CALLBACK {
     ULONG ThreadId;
     HANDLE ThreadHandle;
+#if defined(_WIN32) || defined(_WIN64)
+// TODO: Find CONTEXT alternative
     CONTEXT Context;
+#endif
     ULONG SizeOfContext;
     ULONG64 StackBase;
     ULONG64 StackEnd;
@@ -1413,7 +1455,9 @@ typedef struct _MINIDUMP_THREAD_CALLBACK {
 typedef struct _MINIDUMP_THREAD_EX_CALLBACK {
     ULONG ThreadId;
     HANDLE ThreadHandle;
+#if defined(_WIN32) || defined(_WIN64)
     CONTEXT Context;
+#endif
     ULONG SizeOfContext;
     ULONG64 StackBase;
     ULONG64 StackEnd;
@@ -1566,7 +1610,7 @@ unsigned __int64    __readgsqword(unsigned long Offset);
 unsigned char       __readfsbyte(unsigned long Offset);
 unsigned short      __readfsword(unsigned long Offset);
 unsigned long       __readfsdword(unsigned long Offset);
-unsigned __int64    __readfsqword(unsigned long Offset);
+uint64_t            __readfsqword(unsigned long Offset);
 #endif
 
 static NT_TIB *
@@ -2451,7 +2495,11 @@ typedef struct _MEMORY_BASIC_INFORMATION32 {
     DWORD       Type;
 } MEMORY_BASIC_INFORMATION32, *PMEMORY_BASIC_INFORMATION32;
 
+#if defined(_WIN32) || defined(_WIN64)
 typedef struct __declspec(align(16)) _MEMORY_BASIC_INFORMATION64 {
+#else
+typedef struct __attribute__((aligned(16))) _MEMORY_BASIC_INFORMATION64 {
+#endif
     ULONGLONG   BaseAddress;
     ULONGLONG   AllocationBase;
     DWORD       AllocationProtect;
@@ -2743,15 +2791,15 @@ typedef PTIME_ZONE_INFORMATION LPTIME_ZONE_INFORMATION;
                                 (((unsigned __int64)(x) >> 40) & 0xff00ULL) | \
                                 ((unsigned __int64)(x)  >> 56))
 #else
-unsigned short   __cdecl _byteswap_ushort(unsigned short   Number);
-unsigned long    __cdecl _byteswap_ulong (unsigned long    Number);
-unsigned __int64 __cdecl _byteswap_uint64(unsigned __int64 Number);
+unsigned short  __cdecl _byteswap_ushort(unsigned short   Number);
+unsigned long   __cdecl _byteswap_ulong (unsigned long    Number);
+uint64_t        __cdecl _byteswap_uint64(uint64_t Number);
 #endif
 
-unsigned int _rotl(unsigned int value, int shift);
-unsigned __int64 _rotl64(unsigned __int64 value, int shift);
-unsigned char _BitScanForward(unsigned long * Index, unsigned long Mask);
-unsigned char _BitScanForward64(unsigned long * Index, unsigned __int64 Mask);
+unsigned int    _rotl(unsigned int value, int shift);
+uint64_t        _rotl64(uint64_t value, int shift);
+unsigned char   _BitScanForward(unsigned long * Index, unsigned long Mask);
+unsigned char   _BitScanForward64(unsigned long * Index, uint64_t Mask);
 
 
 /* ========================================================================== */
@@ -4332,35 +4380,419 @@ extern "C" {
 #define EVENT_MODIFY_STATE          0x0002
 
 /* Virtual Keys: */
+/// Left mouse button
+#define VK_LBUTTON                      0x01
+/// Right mouse button
+#define VK_RBUTTON                      0x02
+/// Control-break processing
+#define VK_CANCEL                       0x03
+/// Middle mouse button
+#define VK_MBUTTON                      0x04
+/// X1 mouse button
+#define VK_XBUTTON1                     0x05
+/// X2 mouse button
+#define VK_XBUTTON2                     0x06
+
+/// Reserved
+// -                                    0x07
+
+/// BACKSPACE key
 #define VK_BACK                         0x08
+/// TAB key
 #define VK_TAB                          0x09
-#define VK_SHIFT                        0x10
-#define VK_CONTROL                      0x11
-#define VK_MENU                         0x12
+
+/// Reserved
+// -                                    0x0A-0B
+
+/// CLEAR key
+#define VK_CLEAR                        0x0C
+/// ENTER key
 #define VK_RETURN                       0x0D
 
+/// Unassigned
+// -                                    0x0E-0F
+
+/// SHIFT key
+#define VK_SHIFT                        0x10
+/// CTRL key
+#define VK_CONTROL                      0x11
+/// ALT key
+#define VK_MENU                         0x12
+/// PAUSE key
+#define VK_PAUSE                        0x13
+/// CAPS LOCK key
+#define VK_CAPITAL                      0x14
+/// IME Kana mode
+#define VK_KANA                         0x15
+/// IME Hangul mode
+#define VK_HANGUL                       0x15
+/// IME On
+#define VK_IME_ON                       0x16
+/// IME Junja mode
+#define VK_JUNJA                        0x17
+/// IME final mode
+#define VK_FINAL                        0x18
+/// IME Hanja mode
+#define VK_HANJA                        0x19
+/// IME Kanji mode
+#define VK_KANJI                        0x19
+/// IME Off
+#define VK_IME_OFF                      0x1A
+/// ESC key
 #define VK_ESCAPE                       0x1B
-
+/// IME convert
+#define VK_CONVERT                      0x1C
+/// IME nonconvert
+#define VK_NONCONVERT                   0x1D
+/// IME accept
+#define VK_ACCEPT                       0x1E
+/// IME mode change request
+#define VK_MODECHANGE                   0x1F
+/// SPACEBAR
 #define VK_SPACE                        0x20
+/// PAGE UP key
 #define VK_PRIOR                        0x21
+/// PAGE DOWN key
 #define VK_NEXT                         0x22
+/// END key
 #define VK_END                          0x23
+/// HOME key
 #define VK_HOME                         0x24
+/// LEFT ARROW key
 #define VK_LEFT                         0x25
+/// UP ARROW key
 #define VK_UP                           0x26
+/// RIGHT ARROW key
 #define VK_RIGHT                        0x27
+/// DOWN ARROW key
 #define VK_DOWN                         0x28
+/// SELECT key
 #define VK_SELECT                       0x29
+/// PRINT key
 #define VK_PRINT                        0x2A
+/// EXECUTE key
 #define VK_EXECUTE                      0x2B
+/// PRINT SCREEN key
 #define VK_SNAPSHOT                     0x2C
+/// INS key
 #define VK_INSERT                       0x2D
+/// DEL key
 #define VK_DELETE                       0x2E
+/// HELP key
 #define VK_HELP                         0x2F
+/// 0 key
+#define VK_ZERO                         0x30
+/// 1 key
+#define VK_ONE                          0x31
+/// 2 key
+#define VK_TWO                          0x32
+/// 3 key
+#define VK_TREE                         0x33
+/// 4 key
+#define VK_FOUR                         0x34
+/// 5 key
+#define VK_FIVE                         0x35
+/// 6 key
+#define VK_SIX                          0x36
+/// 7 key
+#define VK_SEVEN                        0x37
+/// 8 key
+#define VK_EIGHT                        0x38
+/// 9 key
+#define VK_NINE                         0x39
 
+/// Undefined
+// -                                    0x3A-40
+
+/// A key
+#define VK_A                            0x41
+/// B key
+#define VK_B                            0x42
+/// C key
+#define VK_C                            0x43
+/// D key
+#define VK_D                            0x44
+/// E key
+#define VK_E                            0x45
+/// F key
+#define VK_F                            0x46
+/// G key
+#define VK_G                            0x47
+/// H key
+#define VK_H                            0x48
+/// I key
+#define VK_I                            0x49
+/// J key
+#define VK_J                            0x4A
+/// K key
+#define VK_K                            0x4B
+/// L key
+#define VK_L                            0x4C
+/// M key
+#define VK_M                            0x4D
+/// N key
+#define VK_N                            0x4E
+/// O key
+#define VK_O                            0x4F
+/// P key
+#define VK_P                            0x50
+/// Q key
+#define VK_Q                            0x51
+/// R key
+#define VK_R                            0x52
+/// S key
+#define VK_S                            0x53
+/// T key
+#define VK_T                            0x54
+/// U key
+#define VK_U                            0x55
+/// V key
+#define VK_V                            0x56
+/// W key
+#define VK_W                            0x57
+/// X key
+#define VK_X                            0x58
+/// Y key
+#define VK_Y                            0x59
+/// Z key
+#define VK_Z                            0x5A
+
+/// Left Windows key
 #define VK_LWIN                         0x5B
+/// Right Windows key
 #define VK_RWIN                         0x5C
+/// Applications key
+#define VK_APPS                         0x5D
+
+/// Reserved
+// -                                    0x5E
+
+/// Computer Sleep key
+#define VK_SLEEP                        0x5F
+/// Numeric keypad 0 key
+#define VK_NUMPAD0                      0x60
+/// Numeric keypad 1 key
+#define VK_NUMPAD1                      0x61
+/// Numeric keypad 2 key
+#define VK_NUMPAD2                      0x62
+/// Numeric keypad 3 key
+#define VK_NUMPAD3                      0x63
+/// Numeric keypad 4 key
+#define VK_NUMPAD4                      0x64
+/// Numeric keypad 5 key
+#define VK_NUMPAD5                      0x65
+/// Numeric keypad 6 key
+#define VK_NUMPAD6                      0x66
+/// Numeric keypad 7 key
+#define VK_NUMPAD7                      0x67
+/// Numeric keypad 8 key
+#define VK_NUMPAD8                      0x68
+/// Numeric keypad 9 key
+#define VK_NUMPAD9                      0x69
+/// Multiply key
+#define VK_MULTIPLY                     0x6A
+/// Add key
+#define VK_ADD                          0x6B
+/// Separator key
+#define VK_SEPARATOR                    0x6C
+/// Subtract key
+#define VK_SUBTRACT                     0x6D
+/// Decimal key
+#define VK_DECIMAL                      0x6E
+/// Divide key
+#define VK_DIVIDE                       0x6F
+/// F1 key
+#define VK_F1                           0x70
+/// F2 key
+#define VK_F2                           0x71
+/// F3 key
+#define VK_F3                           0x72
+/// F4 key
+#define VK_F4                           0x73
+/// F5 key
+#define VK_F5                           0x74
+/// F6 key
+#define VK_F6                           0x75
+/// F7 key
+#define VK_F7                           0x76
+/// F8 key
+#define VK_F8                           0x77
+/// F9 key
+#define VK_F9                           0x78
+/// F10 key
+#define VK_F10                          0x79
+/// F11 key
+#define VK_F11                          0x7A
+/// F12 key
+#define VK_F12                          0x7B
+/// F13 key
+#define VK_F13                          0x7C
+/// F14 key
+#define VK_F14                          0x7D
+/// F15 key
+#define VK_F15                          0x7E
+/// F16 key
+#define VK_F16                          0x7F
+/// F17 key
+#define VK_F17                          0x80
+/// F18 key
+#define VK_F18                          0x81
+/// F19 key
+#define VK_F19                          0x82
+/// F20 key
+#define VK_F20                          0x83
+/// F21 key
+#define VK_F21                          0x84
+/// F22 key
+#define VK_F22                          0x85
+/// F23 key
+#define VK_F23                          0x86
+/// F24 key
+#define VK_F24                          0x87
+
+/// Reserved
+// -                                    0x88-8F
+
+/// NUM LOCK key
+#define VK_NUMLOCK                      0x90
+/// SCROLL LOCK key
+#define VK_SCROLL                       0x91
+
+/// OEM specific
+// -                                    0x92-96
+/// Unassigned
+// -                                    0x97-9F
+
+/// Left SHIFT key
+#define VK_LSHIFT                       0xA0
+/// Right SHIFT key
+#define VK_RSHIFT                       0xA1
+/// Left CONTROL key
+#define VK_LCONTROL                     0xA2
+/// Right CONTROL key
+#define VK_RCONTROL                     0xA3
+/// Left ALT key
+#define VK_LMENU                        0xA4
+/// Right ALT key
+#define VK_RMENU                        0xA5
+/// Browser Back key
+#define VK_BROWSER_BACK                 0xA6
+/// Browser Forward key
+#define VK_BROWSER_FORWARD              0xA7
+/// Browser Refresh key
+#define VK_BROWSER_REFRESH              0xA8
+/// Browser Stop key
+#define VK_BROWSER_STOP                 0xA9
+/// Browser Search key
+#define VK_BROWSER_SEARCH               0xAA
+/// Browser Favorites key
+#define VK_BROWSER_FAVORITES            0xAB
+/// Browser Start and Home key
+#define VK_BROWSER_HOME                 0xAC
+/// Volume Mute key
+#define VK_VOLUME_MUTE                  0xAD
+/// Volume Down key
+#define VK_VOLUME_DOWN                  0xAE
+/// Volume Up key
+#define VK_VOLUME_UP                    0xAF
+/// Next Track key
+#define VK_MEDIA_NEXT_TRACK             0xB0
+/// Previous Track key
+#define VK_MEDIA_PREV_TRACK             0xB1
+/// Stop Media key
+#define VK_MEDIA_STOP                   0xB2
+/// Play/Pause Media key
+#define VK_MEDIA_PLAY_PAUSE             0xB3
+/// Start Mail key
+#define VK_LAUNCH_MAIL                  0xB4
+/// Select Media key
+#define VK_LAUNCH_MEDIA_SELECT          0xB5
+/// Start Application 1 key
+#define VK_LAUNCH_APP1                  0xB6
+/// Start Application 2 key
+#define VK_LAUNCH_APP2                  0xB7
+
+/// Reserved
+// -                                    0xB8-B9
+
+/// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the `;:` key
+#define VK_OEM_1                        0xBA
+/// For any country/region, the `+` key
+#define VK_OEM_PLUS                     0xBB
+/// For any country/region, the `,` key
+#define VK_OEM_COMMA                    0xBC
+/// For any country/region, the `-` key
+#define VK_OEM_MINUS                    0xBD
+/// For any country/region, the `.` key
+#define VK_OEM_PERIOD                   0xBE
+/// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the `/?` key
+#define VK_OEM_2                        0xBF
+/// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the ``~` key
+#define VK_OEM_3                        0xC0
+
+/// Reserved
+// -                                    0xC1-DA
+
+/// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the `[{` key
+#define VK_OEM_4                        0xDB
+/// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the `\\|` key
+#define VK_OEM_5                        0xDC
+/// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the `]}` key
+#define VK_OEM_6                        0xDD
+/// Used for miscellaneous characters; it can vary by keyboard. For the US standard keyboard, the `'"` key
+#define VK_OEM_7                        0xDE
+/// Used for miscellaneous characters; it can vary by keyboard.
+#define VK_OEM_8                        0xDF
+
+/// Reserved
+// -                                    0xE0
+
+/// OEM specific
+// -                                    0xE1
+
+/// The `&lt;&gt;` keys on the US standard keyboard, or the `\\|` key on the non-US 102-key keyboard
+#define VK_OEM_102                      0xE2
+
+/// OEM specific
+// -                                    0xE3-E4
+
+/// IME PROCESS key
 #define VK_PROCESSKEY                   0xE5
+
+/// OEM specific
+// -                                    0xE6
+
+/**
+ Used to pass Unicode characters as if they were keystrokes.
+ The VK_PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods.
+ For more information, see Remark in KEYBDINPUT, SendInput, WM_KEYDOWN, and WM_KEYUP
+ */
+#define VK_PACKET                       0xE7
+
+/// Unassigned
+// -                                    0xE8
+
+/// OEM specific
+// -                                    0xE9-F5
+
+/// Attn key
+#define VK_ATTN                         0xF6
+/// CrSel key
+#define VK_CRSEL                        0xF7
+/// ExSel key
+#define VK_EXSEL                        0xF8
+/// Erase EOF key
+#define VK_EREOF                        0xF9
+/// Play key
+#define VK_PLAY                         0xFA
+/// Zoom key
+#define VK_ZOOM                         0xFB
+/// Reserved
+#define VK_NONAME                       0xFC
+/// PA1 key
+#define VK_PA1                          0xFD
+/// Clear key
+#define VK_OEM_CLEAR                    0xFE
 
 
 /* ========================================================================== */
@@ -4656,7 +5088,7 @@ GetCurrentFiber(void)
 }
 #endif
 
-__forceinline PVOID
+FORCEINLINE PVOID
 GetFiberData(void)
 {
     return *(PVOID *)GetCurrentFiber();
