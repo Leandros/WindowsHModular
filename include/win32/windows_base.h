@@ -227,6 +227,7 @@ typedef DWORD *             PDWORD;
 typedef LPVOID              HANDLE;
 typedef HANDLE              HINSTANCE;
 typedef HANDLE              HWND;
+typedef HANDLE              HMONITOR;
 typedef HINSTANCE           HMODULE;
 typedef HANDLE              HDC;
 typedef HANDLE              HGLRC;
