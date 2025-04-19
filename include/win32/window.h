@@ -137,6 +137,7 @@ extern "C" {
 #define WM_SHOWWINDOW               0x0018
 #define WM_WININICHANGE             0x001A
 #define WM_NCDESTROY                0x0082
+#define WM_INPUT                    0x00FF
 
 #define WM_KEYDOWN                  0x0100
 #define WM_KEYUP                    0x0101
