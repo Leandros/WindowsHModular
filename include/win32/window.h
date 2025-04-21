@@ -456,9 +456,12 @@ BOOL WINAPI SetEvent(
 SHORT WINAPI GetKeyState(
         int     nVirtKey);
 
-
+/* ========================================================================== */
+/* Cursor Functions: */
 BOOL WINAPI ClipCursor(
         const RECT *lpRect);
+int WINAPI ShowCursor(
+        BOOL bShow);
 #if defined(__cplusplus)
 }
 #endif
