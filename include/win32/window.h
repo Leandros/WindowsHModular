@@ -243,32 +243,32 @@ typedef struct tagWNDCLASS {
     LPCTSTR     lpszClassName;
 } WNDCLASS, *PWNDCLASS;
 typedef struct tagWNDCLASSEXA {
-	UINT        cbSize;
-	UINT        style;
-	WNDPROC     lpfnWndProc;
-	int         cbClsExtra;
-	int         cbWndExtra;
-	HINSTANCE   hInstance;
-	HICON       hIcon;
-	HCURSOR     hCursor;
-	HBRUSH      hbrBackground;
-	LPCSTR      lpszMenuName;
-	LPCSTR      lpszClassName;
-	HICON       hIconSm;
+    UINT        cbSize;
+    UINT        style;
+    WNDPROC     lpfnWndProc;
+    int         cbClsExtra;
+    int         cbWndExtra;
+    HINSTANCE   hInstance;
+    HICON       hIcon;
+    HCURSOR     hCursor;
+    HBRUSH      hbrBackground;
+    LPCSTR      lpszMenuName;
+    LPCSTR      lpszClassName;
+    HICON       hIconSm;
 } WNDCLASSEXA, *PWNDCLASSEXA, *NPWNDCLASSEXA, *LPWNDCLASSEXA;
 typedef struct tagWNDCLASSEXW {
-	UINT        cbSize;
-	UINT        style;
-	WNDPROC     lpfnWndProc;
-	int         cbClsExtra;
-	int         cbWndExtra;
-	HINSTANCE   hInstance;
-	HICON       hIcon;
-	HCURSOR     hCursor;
-	HBRUSH      hbrBackground;
-	LPCWSTR     lpszMenuName;
-	LPCWSTR     lpszClassName;
-	HICON       hIconSm;
+    UINT        cbSize;
+    UINT        style;
+    WNDPROC     lpfnWndProc;
+    int         cbClsExtra;
+    int         cbWndExtra;
+    HINSTANCE   hInstance;
+    HICON       hIcon;
+    HCURSOR     hCursor;
+    HBRUSH      hbrBackground;
+    LPCWSTR     lpszMenuName;
+    LPCWSTR     lpszClassName;
+    HICON       hIconSm;
 } WNDCLASSEXW, *PWNDCLASSEXW, *NPWNDCLASSEXW, *LPWNDCLASSEXW;
 
 /* Messages: */
@@ -364,6 +364,9 @@ BOOL WINAPI AdjustWindowRectEx(
 BOOL WINAPI GetClientRect(
         HWND    hWnd,
         LPRECT  lpRect);
+BOOL WINAPI GetWindowRect(
+            HWND    hWnd,
+            LPRECT  lpRect);
 int WINAPI GetSystemMetrics(
         int     nIndex);
 BOOL WINAPI SetWindowPos(
@@ -453,6 +456,9 @@ BOOL WINAPI SetEvent(
 SHORT WINAPI GetKeyState(
         int     nVirtKey);
 
+
+BOOL WINAPI ClipCursor(
+        const RECT *lpRect);
 #if defined(__cplusplus)
 }
 #endif
