@@ -521,6 +521,11 @@ BOOL WINAPI GetFileTime(
         LPFILETIME lpCreationTime,
         LPFILETIME lpLastAccessTime,
         LPFILETIME lpLastWriteTime);
+BOOL WINAPI SetFileTime(
+			HANDLE  hFile,
+			LPFILETIME lpCreationTime,
+			LPFILETIME lpLastAccessTime,
+			LPFILETIME lpLastWriteTime);
 BOOL WINAPI SetEndOfFile(
         HANDLE hFile);
 BOOL WINAPI CreateDirectoryA(
