@@ -32,10 +32,23 @@ extern "C" {
 #define DECLSPEC_ALIGN(x)   __declspec(align(x))
 
 /* Basic Defines: */
-#define NTAPI __stdcall
-#define WINAPI __stdcall
-#define APIENTRY __stdcall
-#define CALLBACK __stdcall
+#ifdef _WIN32
+
+    #define NTAPI __stdcall
+    #define WINAPI __stdcall
+    #define APIENTRY __stdcall
+    #define CALLBACK __stdcall
+
+#else
+// FIXME: Best solution is to keep it empty?
+// Warning: __stdcall' calling convention is not supported for this target
+    #define NTAPI
+    #define WINAPI
+    #define APIENTRY
+    #define CALLBACK
+
+#endif
+
 #define TRUE (1)
 #define FALSE (0)
 #ifndef NULL
@@ -197,7 +210,13 @@ typedef unsigned int        ULONG32;
 typedef uint64_t            DWORD64;
 typedef uint64_t            ULONG64;
 typedef signed int          INT32;
-typedef signed __int64      INT64;
+
+#if defined(_WIN32) || defined(_WIN64)
+    typedef signed __int64      INT64;
+#else
+    #define signed __int64      int64_t;
+#endif
+
 typedef uint64_t            DWORDLONG;
 
 typedef CHAR *              PCHAR;
