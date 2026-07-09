@@ -146,6 +146,8 @@ extern "C" {
 
 #define WM_SYSCOMMAND               0x0112
 
+#define WM_MOUSEMOVE                0x0200
+
 #define WM_ENTERSIZEMOVE            0x0231
 #define WM_EXITSIZEMOVE             0x0232
 
