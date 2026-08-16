@@ -350,6 +350,13 @@ BOOL WINAPI GetComputerNameW(
         LPWSTR  lpBuffer,
         LPDWORD lpnSize);
 
+BOOL WINAPI GetUserNameA(
+		LPSTR lpBuffer,
+		LPDWORD pcbBuffer);
+BOOL WINAPI GetUserNameW(
+		LPWSTR lpBuffer,
+		LPDWORD pcbBuffer);
+
 /* Version: */
 BOOL WINAPI VerifyVersionInfoA(
         LPOSVERSIONINFOEXA lpVersionInfo,
