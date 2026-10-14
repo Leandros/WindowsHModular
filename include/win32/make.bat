@@ -42,6 +42,8 @@ type intrin.h >> windows.h
 echo:>> windows.h
 type fiber.h >> windows.h
 echo:>> windows.h
+type rawinput.h >> windows.h
+echo:>> windows.h
 
 :: Finish skeleton
 echo #endif>> windows.h
