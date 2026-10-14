@@ -716,6 +716,10 @@ typedef enum _MINIDUMP_TYPE {
     MiniDumpValidTypeFlags                 = 0x0007ffff,
 } MINIDUMP_TYPE;
 
+    
+// All the Minidump structs are pack 4!
+#pragma pack(push, 4)
+
 /* == Exception Info == */
 typedef struct _MINIDUMP_EXCEPTION_INFORMATION {
     DWORD ThreadId;
@@ -850,6 +854,8 @@ typedef struct _MINIDUMP_USER_STREAM_INFORMATION {
     ULONG UserStreamCount;
     PMINIDUMP_USER_STREAM UserStreamArray;
 } MINIDUMP_USER_STREAM_INFORMATION, *PMINIDUMP_USER_STREAM_INFORMATION;
+
+#pragma pack(pop)
 
 /* Function (all this shit above is required for this simple function). */
 BOOL WINAPI MiniDumpWriteDump(
