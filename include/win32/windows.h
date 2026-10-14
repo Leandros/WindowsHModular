@@ -46,6 +46,13 @@ extern "C" {
 #define CALLBACK __stdcall
 #define TRUE (1)
 #define FALSE (0)
+#ifndef NULL
+#   ifdef __cplusplus
+#       define NULL __nullptr
+#   else
+#       define NULL ((void *)0)
+#   endif
+#endif
 #ifndef FORCEINLINE
 #define FORCEINLINE __forceinline
 #endif
@@ -68,6 +75,9 @@ extern "C" {
 #define HIWORD(l)           ((WORD)((((DWORD_PTR)(l)) >> 16) & 0xffff))
 #define LOBYTE(w)           ((BYTE)(((DWORD_PTR)(w)) & 0xff))
 #define HIBYTE(w)           ((BYTE)((((DWORD_PTR)(w)) >> 8) & 0xff))
+
+#define GET_X_LPARAM(lp)    ((int)(short)LOWORD(lp))
+#define GET_Y_LPARAM(lp)    ((int)(short)HIWORD(lp))
 
 #if !defined(_68K_) \
     && !defined(_MPPC_) \
@@ -203,6 +213,7 @@ typedef uint64_t            DWORDLONG;
 
 typedef CHAR *              PCHAR;
 typedef ULONG *             PULONG;
+typedef BYTE *              PBYTE;
 typedef ULONG64 *           PULONG64;
 typedef DWORD64 *           PDWORD64;
 
@@ -227,6 +238,7 @@ typedef DWORD *             PDWORD;
 typedef LPVOID              HANDLE;
 typedef HANDLE              HINSTANCE;
 typedef HANDLE              HWND;
+typedef HANDLE              HMONITOR;
 typedef HINSTANCE           HMODULE;
 typedef HANDLE              HDC;
 typedef HANDLE              HGLRC;
@@ -234,6 +246,7 @@ typedef HANDLE              HMENU;
 typedef HANDLE *            PHANDLE;
 typedef HANDLE *            LPHANDLE;
 
+#define INVALID_HANDLE_VALUE    ((HANDLE)(LONG_PTR)-1)
 #define DECLARE_HANDLE(name) struct name##__{int unused;}; typedef struct name##__ *name
 
 typedef WCHAR *             PWSTR;
@@ -263,6 +276,8 @@ typedef CHAR *              LPSTR;
 typedef WCHAR *             LPWSTR;
 typedef const CHAR *        LPCSTR;
 typedef const WCHAR *       LPCWSTR;
+typedef const WCHAR *       PCWSTR;
+
 #if defined(UNICODE)
 typedef WCHAR               TCHAR;
 typedef WCHAR               TBYTE;
@@ -325,9 +340,11 @@ typedef ACCESS_MASK         REGSAM;
 #define ERROR_NO_MORE_FILES         18L
 #define ERROR_SHARING_VIOLATION     32L
 #define ERROR_FILE_EXISTS           80L
+#define ERROR_INVALID_PARAMETER     87L
 #define ERROR_INSUFFICIENT_BUFFER   122L
 #define ERROR_ALREADY_EXISTS        183L
 #define ERROR_MORE_DATA             234L
+#define ERROR_CANT_ACCESS_FILE      1920L
 
 
 /* ========================================================================== */
@@ -343,6 +360,19 @@ typedef ACCESS_MASK         REGSAM;
 /* ========================================================================== */
 /* Structures: */
 /* ========================================================================== */
+typedef struct _OVERLAPPED {
+    ULONG_PTR Internal;
+    ULONG_PTR InternalHigh;
+    union {
+        struct {
+            DWORD Offset;
+            DWORD OffsetHigh;
+        };
+        PVOID Pointer;
+    };
+    HANDLE hEvent;
+} OVERLAPPED, *LPOVERLAPPED;
+
 typedef struct _SECURITY_ATTRIBUTES {
     DWORD           nLength;
     LPVOID          lpSecurityDescriptor;
@@ -379,6 +409,13 @@ typedef struct _FILETIME {
     DWORD dwHighDateTime;
 } FILETIME, *PFILETIME, *LPFILETIME;
 
+/* GUID: */
+typedef struct _GUID {
+    unsigned long  Data1;
+    unsigned short Data2;
+    unsigned short Data3;
+    unsigned char  Data4[8];
+} GUID;
 
 #if defined(__cplusplus)
 }
@@ -1388,6 +1425,10 @@ typedef enum _MINIDUMP_TYPE {
     MiniDumpValidTypeFlags                 = 0x0007ffff,
 } MINIDUMP_TYPE;
 
+    
+// All the Minidump structs are pack 4!
+#pragma pack(push, 4)
+
 /* == Exception Info == */
 typedef struct _MINIDUMP_EXCEPTION_INFORMATION {
     DWORD ThreadId;
@@ -1522,6 +1563,8 @@ typedef struct _MINIDUMP_USER_STREAM_INFORMATION {
     ULONG UserStreamCount;
     PMINIDUMP_USER_STREAM UserStreamArray;
 } MINIDUMP_USER_STREAM_INFORMATION, *PMINIDUMP_USER_STREAM_INFORMATION;
+
+#pragma pack(pop)
 
 /* Function (all this shit above is required for this simple function). */
 BOOL WINAPI MiniDumpWriteDump(
@@ -1961,21 +2004,104 @@ extern "C" {
 typedef DWORD SECURITY_INFORMATION, *PSECURITY_INFORMATION;
 typedef HANDLE PSECURITY_DESCRIPTOR;
 
+/* Device IO: */
+#define FILE_DEVICE_FILE_SYSTEM         0x00000009
+
+#define METHOD_BUFFERED                 0
+#define METHOD_NEITHER                  3
+
+#define FILE_ANY_ACCESS                 0
+
+#define CTL_CODE(DeviceType, Function, Method, Access) (((DeviceType) << 16) | ((Access) << 14) | ((Function) << 2) | (Method))
+
+#define FSCTL_READ_FILE_USN_DATA            CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 58,  METHOD_NEITHER,  FILE_ANY_ACCESS)
+#define FSCTL_QUERY_USN_JOURNAL             CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 61,  METHOD_BUFFERED, FILE_ANY_ACCESS)
+#define FSCTL_READ_UNPRIVILEGED_USN_JOURNAL CTL_CODE(FILE_DEVICE_FILE_SYSTEM, 234, METHOD_NEITHER,  FILE_ANY_ACCESS)
+
+/* USN Reasons: */
+#define USN_REASON_DATA_OVERWRITE        0x00000001
+#define USN_REASON_DATA_EXTEND           0x00000002
+#define USN_REASON_DATA_TRUNCATION       0x00000004
+#define USN_REASON_NAMED_DATA_OVERWRITE  0x00000010
+#define USN_REASON_NAMED_DATA_EXTEND     0x00000020
+#define USN_REASON_NAMED_DATA_TRUNCATION 0x00000040
+#define USN_REASON_FILE_CREATE           0x00000100
+#define USN_REASON_FILE_DELETE           0x00000200
+#define USN_REASON_EA_CHANGE             0x00000400
+#define USN_REASON_SECURITY_CHANGE       0x00000800
+#define USN_REASON_RENAME_OLD_NAME       0x00001000
+#define USN_REASON_RENAME_NEW_NAME       0x00002000
+#define USN_REASON_INDEXABLE_CHANGE      0x00004000
+#define USN_REASON_BASIC_INFO_CHANGE     0x00008000
+#define USN_REASON_HARD_LINK_CHANGE      0x00010000
+#define USN_REASON_COMPRESSION_CHANGE    0x00020000
+#define USN_REASON_ENCRYPTION_CHANGE     0x00040000
+#define USN_REASON_OBJECT_ID_CHANGE      0x00080000
+#define USN_REASON_REPARSE_POINT_CHANGE  0x00100000
+#define USN_REASON_STREAM_CHANGE         0x00200000
+#define USN_REASON_TRANSACTED_CHANGE     0x00400000
+#define USN_REASON_INTEGRITY_CHANGE      0x00800000
+#define USN_REASON_DESIRED_STORAGE_CLASS_CHANGE 0x01000000
+#define USN_REASON_CLOSE                 0x80000000
+
+/* File Iterations Flags: */
+#define FIND_FIRST_EX_CASE_SENSITIVE        0x00000001
+#define FIND_FIRST_EX_LARGE_FETCH           0x00000002
+#define FIND_FIRST_EX_ON_DISK_ENTRIES_ONLY  0x00000004
+
+/* ========================================================================== */
+/* Enums: */
+typedef enum _FILE_ID_TYPE {
+    FileIdType,
+    ObjectIdType,
+    ExtendedFileIdType,
+    MaximumFileIdType
+} FILE_ID_TYPE, *PFILE_ID_TYPE;
+
+typedef enum _FILE_INFO_BY_HANDLE_CLASS {
+    FileBasicInfo,
+    FileStandardInfo,
+    FileNameInfo,
+    FileRenameInfo,
+    FileDispositionInfo,
+    FileAllocationInfo,
+    FileEndOfFileInfo,
+    FileStreamInfo,
+    FileCompressionInfo,
+    FileAttributeTagInfo,
+    FileIdBothDirectoryInfo,
+    FileIdBothDirectoryRestartInfo,
+    FileIoPriorityHintInfo,
+    FileRemoteProtocolInfo,
+    FileFullDirectoryInfo,
+    FileFullDirectoryRestartInfo,
+    FileStorageInfo,
+    FileAlignmentInfo,
+    FileIdInfo,
+    FileIdExtdDirectoryInfo,
+    FileIdExtdDirectoryRestartInfo,
+    FileDispositionInfoEx,
+    FileRenameInfoEx,
+    FileCaseSensitiveInfo,
+    FileNormalizedNameInfo,
+    MaximumFileInfoByHandleClass
+} FILE_INFO_BY_HANDLE_CLASS, *PFILE_INFO_BY_HANDLE_CLASS;
+
+typedef enum _FINDEX_INFO_LEVELS {
+    FindExInfoStandard,
+    FindExInfoBasic,
+    FindExInfoMaxInfoLevel
+} FINDEX_INFO_LEVELS;
+
+typedef enum _FINDEX_SEARCH_OPS {
+    FindExSearchNameMatch,
+    FindExSearchLimitToDirectories,
+    FindExSearchLimitToDevices,
+    FindExSearchMaxSearchOp
+} FINDEX_SEARCH_OPS;
 
 /* ========================================================================== */
 /* Structures: */
-typedef struct _OVERLAPPED {
-    ULONG_PTR Internal;
-    ULONG_PTR InternalHigh;
-    union {
-        struct {
-            DWORD Offset;
-            DWORD OffsetHigh;
-        };
-        PVOID Pointer;
-    };
-    HANDLE hEvent;
-} OVERLAPPED, *LPOVERLAPPED;
 
 /* File Iteration: */
 typedef struct _WIN32_FIND_DATAA {
@@ -2003,6 +2129,116 @@ typedef struct _WIN32_FIND_DATAW {
     WCHAR    cAlternateFileName[14];
 } WIN32_FIND_DATAW, *PWIN32_FIND_DATAW, *LPWIN32_FIND_DATAW;
 
+ typedef struct _FILE_ID_128 {
+    BYTE Identifier[16];
+} FILE_ID_128, *PFILE_ID_128;
+
+typedef struct FILE_ID_DESCRIPTOR {
+    DWORD        dwSize;
+    FILE_ID_TYPE Type;
+    union {
+        LARGE_INTEGER FileId;
+        GUID          ObjectId;
+        FILE_ID_128   ExtendedFileId;
+    };
+} FILE_ID_DESCRIPTOR, *LPFILE_ID_DESCRIPTOR;
+
+typedef struct _FILE_BASIC_INFO {
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    DWORD         FileAttributes;
+} FILE_BASIC_INFO, *PFILE_BASIC_INFO;
+
+typedef struct _FILE_NAME_INFO {
+    DWORD FileNameLength;
+    WCHAR FileName[1];
+} FILE_NAME_INFO, *PFILE_NAME_INFO;
+
+typedef struct _FILE_ID_INFO {
+    ULONGLONG   VolumeSerialNumber;
+    FILE_ID_128 FileId;
+} FILE_ID_INFO, *PFILE_ID_INFO;
+
+typedef struct _FILE_ID_EXTD_DIR_INFO {
+    ULONG         NextEntryOffset;
+    ULONG         FileIndex;
+    LARGE_INTEGER CreationTime;
+    LARGE_INTEGER LastAccessTime;
+    LARGE_INTEGER LastWriteTime;
+    LARGE_INTEGER ChangeTime;
+    LARGE_INTEGER EndOfFile;
+    LARGE_INTEGER AllocationSize;
+    ULONG         FileAttributes;
+    ULONG         FileNameLength;
+    ULONG         EaSize;
+    ULONG         ReparsePointTag;
+    FILE_ID_128   FileId;
+    WCHAR         FileName[1];
+} FILE_ID_EXTD_DIR_INFO, *PFILE_ID_EXTD_DIR_INFO;
+
+ typedef LONGLONG USN;
+typedef struct {
+    DWORDLONG UsnJournalID;
+    USN       FirstUsn;
+    USN       NextUsn;
+    USN       LowestValidUsn;
+    USN       MaxUsn;
+    DWORDLONG MaximumSize;
+    DWORDLONG AllocationDelta;
+} USN_JOURNAL_DATA_V0, *PUSN_JOURNAL_DATA_V0;
+
+typedef struct {
+    USN       StartUsn;
+    DWORD     ReasonMask;
+    DWORD     ReturnOnlyOnClose;
+    DWORDLONG Timeout;
+    DWORDLONG BytesToWaitFor;
+    DWORDLONG UsnJournalID;
+    WORD      MinMajorVersion;
+    WORD      MaxMajorVersion;
+} READ_USN_JOURNAL_DATA_V1, *PREAD_USN_JOURNAL_DATA_V1;
+
+typedef struct {
+    DWORD     RecordLength;
+    WORD      MajorVersion;
+    WORD      MinorVersion;
+} USN_RECORD_COMMON_HEADER, *PUSN_RECORD_COMMON_HEADER;
+
+typedef struct {
+    DWORD         RecordLength;
+    WORD          MajorVersion;
+    WORD          MinorVersion;
+    DWORDLONG     FileReferenceNumber;
+    DWORDLONG     ParentFileReferenceNumber;
+    USN           Usn;
+    LARGE_INTEGER TimeStamp;
+    DWORD         Reason;
+    DWORD         SourceInfo;
+    DWORD         SecurityId;
+    DWORD         FileAttributes;
+    WORD          FileNameLength;
+    WORD          FileNameOffset;
+    WCHAR         FileName[1];
+} USN_RECORD_V2, *PUSN_RECORD_V2;
+
+typedef struct {
+    DWORD         RecordLength;
+    WORD          MajorVersion;
+    WORD          MinorVersion;
+    FILE_ID_128   FileReferenceNumber;
+    FILE_ID_128   ParentFileReferenceNumber;
+    USN           Usn;
+    LARGE_INTEGER TimeStamp;
+    DWORD         Reason;
+    DWORD         SourceInfo;
+    DWORD         SecurityId;
+    DWORD         FileAttributes;
+    WORD          FileNameLength;
+    WORD          FileNameOffset;
+    WCHAR         FileName[1];
+} USN_RECORD_V3, *PUSN_RECORD_V3;
 
 /* ========================================================================== */
 /* File I/O Functions: */
@@ -2127,12 +2363,19 @@ BOOL WINAPI GetFileAttributesExW(
     LPCWSTR lpFileName,
     GET_FILEEX_INFO_LEVELS fInfoLevelId,
     LPVOID lpFileInformation);
+BOOL SetFileAttributesA(LPCSTR lpFileName, DWORD dwFileAttributes);
+BOOL SetFileAttributesW(LPCWSTR lpFileName, DWORD dwFileAttributes);
 
 BOOL WINAPI GetFileTime(
         HANDLE  hFile,
         LPFILETIME lpCreationTime,
         LPFILETIME lpLastAccessTime,
         LPFILETIME lpLastWriteTime);
+BOOL WINAPI SetFileTime(
+			HANDLE  hFile,
+			LPFILETIME lpCreationTime,
+			LPFILETIME lpLastAccessTime,
+			LPFILETIME lpLastWriteTime);
 BOOL WINAPI SetEndOfFile(
         HANDLE hFile);
 BOOL WINAPI CreateDirectoryA(
@@ -2178,6 +2421,19 @@ BOOL WINAPI FlushViewOfFile(
         LPCVOID lpBaseAddress,
         SIZE_T  dwNumberOfBytesToFlush);
 
+HANDLE WINAPI OpenFileById (
+        HANDLE hVolumeHint,
+        LPFILE_ID_DESCRIPTOR lpFileId,
+        DWORD dwDesiredAccess,
+        DWORD dwShareMode,
+        LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+        DWORD dwFlagsAndAttributes);
+
+BOOL WINAPI GetFileInformationByHandleEx(
+        HANDLE hFile,
+        FILE_INFO_BY_HANDLE_CLASS FileInformationClass,
+        LPVOID lpFileInformation,
+        DWORD dwBufferSize);
 
 /* ========================================================================== */
 /* File Iteration Functions: */
@@ -2187,6 +2443,20 @@ HANDLE WINAPI FindFirstFileA(
 HANDLE WINAPI FindFirstFileW(
         LPCWSTR lpFileName,
         LPWIN32_FIND_DATAW lpFindFileData);
+HANDLE WINAPI FindFirstFileExA(
+        LPCSTR lpFileName,
+        FINDEX_INFO_LEVELS fInfoLevelId,
+        LPVOID lpFindFileData,
+        FINDEX_SEARCH_OPS fSearchOp,
+        LPVOID lpSearchFilter,
+        DWORD dwAdditionalFlags);
+HANDLE WINAPI FindFirstFileExW(
+        LPCWSTR lpFileName,
+        FINDEX_INFO_LEVELS fInfoLevelId,
+        LPVOID lpFindFileData,
+        FINDEX_SEARCH_OPS fSearchOp,
+        LPVOID lpSearchFilter,
+        DWORD dwAdditionalFlags);
 BOOL WINAPI FindNextFileA(
         HANDLE hFindFile,
         LPWIN32_FIND_DATAA lpFindFileData);
@@ -2245,6 +2515,65 @@ BOOL WINAPI GetFileSecurityW(
     DWORD                nLength,
     LPDWORD              lpnLengthNeeded);
 
+/* ========================================================================== */
+/* Directory Changes: */
+#define FILE_ACTION_ADDED 0x00000001
+#define FILE_ACTION_REMOVED 0x00000002
+#define FILE_ACTION_MODIFIED 0x00000003
+#define FILE_ACTION_RENAMED_OLD_NAME 0x00000004
+#define FILE_ACTION_RENAMED_NEW_NAME 0x00000005
+
+#define STATUS_WAIT_0                   ((DWORD)0x00000000L)
+#define STATUS_TIMEOUT                  ((DWORD)0x00000102L)
+#define STATUS_PENDING                  ((DWORD)0x00000103L)
+#define STILL_ACTIVE                    STATUS_PENDING
+
+#define FILE_FLAG_WRITE_THROUGH         0x80000000
+#define FILE_FLAG_OVERLAPPED            0x40000000
+#define FILE_FLAG_NO_BUFFERING          0x20000000
+#define FILE_FLAG_RANDOM_ACCESS         0x10000000
+#define FILE_FLAG_SEQUENTIAL_SCAN       0x08000000
+#define FILE_FLAG_DELETE_ON_CLOSE       0x04000000
+#define FILE_FLAG_BACKUP_SEMANTICS      0x02000000
+#define FILE_FLAG_POSIX_SEMANTICS       0x01000000
+#define FILE_FLAG_SESSION_AWARE         0x00800000
+#define FILE_FLAG_OPEN_REPARSE_POINT    0x00200000
+#define FILE_FLAG_OPEN_NO_RECALL        0x00100000
+#define FILE_FLAG_FIRST_PIPE_INSTANCE   0x00080000
+
+#define HasOverlappedIoCompleted(lpOverlapped) (((DWORD)(lpOverlapped)->Internal) != STATUS_PENDING)
+
+typedef VOID(WINAPI* LPOVERLAPPED_COMPLETION_ROUTINE)(DWORD dwErrorCode, DWORD dwNumberOfBytesTransfered, LPOVERLAPPED lpOverlapped);
+
+typedef struct FILE_NOTIFY_INFORMATION {
+  DWORD NextEntryOffset;
+  DWORD Action;
+  DWORD FileNameLength;
+  WCHAR FileName[1];
+} FILE_NOTIFY_INFORMATION;
+
+BOOL WINAPI ReadDirectoryChangesW(
+  HANDLE hDirectory,
+  LPVOID lpBuffer,
+  DWORD nBufferLength,
+  BOOL bWatchSubtree,
+  DWORD dwNotifyFilter,
+  LPDWORD lpBytesReturned,
+  LPOVERLAPPED lpOverlapped,
+  LPOVERLAPPED_COMPLETION_ROUTINE lpCompletionRoutine
+);
+
+/* ========================================================================== */
+/* Device IO: */
+BOOL WINAPI DeviceIoControl(
+    HANDLE hDevice,
+    DWORD dwIoControlCode,
+    LPVOID lpInBuffer,
+    DWORD nInBufferSize,
+    LPVOID lpOutBuffer,
+    DWORD nOutBufferSize,
+    LPDWORD lpBytesReturned,
+    LPOVERLAPPED lpOverlapped);
 
 #if defined(__cplusplus)
 }
@@ -2346,7 +2675,6 @@ extern "C" {
 #define STD_INPUT_HANDLE        ((DWORD)-10)
 #define STD_OUTPUT_HANDLE       ((DWORD)-11)
 #define STD_ERROR_HANDLE        ((DWORD)-12)
-#define INVALID_HANDLE_VALUE    ((HANDLE)(LONG_PTR)-1)
 #define ATTACH_PARENT_PROCESS   ((DWORD)-1)
 
 #define HANDLE_FLAG_INHERIT             0x00000001
@@ -2368,6 +2696,25 @@ extern "C" {
 #define CTRL_CLOSE_EVENT        0x2
 #define CTRL_LOGOFF_EVENT       0x5
 #define CTRL_SHUTDOWN_EVENT     0x6
+
+/* Console Input Mode flags */
+#define ENABLE_PROCESSED_INPUT              0x0001
+#define ENABLE_LINE_INPUT                   0x0002
+#define ENABLE_ECHO_INPUT                   0x0004
+#define ENABLE_WINDOW_INPUT                 0x0008
+#define ENABLE_MOUSE_INPUT                  0x0010
+#define ENABLE_INSERT_MODE                  0x0020
+#define ENABLE_QUICK_EDIT_MODE              0x0040
+#define ENABLE_EXTENDED_FLAGS               0x0080
+#define ENABLE_AUTO_POSITION                0x0100
+#define ENABLE_VIRTUAL_TERMINAL_INPUT       0x0200
+
+/* Console Output Mode flags */
+#define ENABLE_PROCESSED_OUTPUT             0x0001
+#define ENABLE_WRAP_AT_EOL_OUTPUT           0x0002
+#define ENABLE_VIRTUAL_TERMINAL_PROCESSING  0x0004
+#define DISABLE_NEWLINE_AUTO_RETURN         0x0008
+#define ENABLE_LVB_GRID_WORLDWIDE           0x0010
 
 /* HeapAlloc, HeapReAlloc, etc: */
 #define HEAP_NO_SERIALIZE           0x00000001
@@ -2481,6 +2828,12 @@ BOOL WINAPI GetConsoleScreenBufferInfo(
 BOOL WINAPI SetConsoleTextAttribute(
         HANDLE hConsoleOutput,
         WORD wAttributes);
+BOOL WINAPI GetConsoleMode(
+        HANDLE hConsoleHandle,
+        LPDWORD lpMode);
+BOOL WINAPI SetConsoleMode(
+        HANDLE hConsoleHandle,
+        DWORD dwMode);
 BOOL WINAPI CloseHandle(
         HANDLE hObject);
 BOOL WINAPI SetHandleInformation(
@@ -2578,11 +2931,46 @@ BOOL WINAPI FlushInstructionCache(
 
 /* ========================================================================== */
 /* Pipe Functions: */
+#define PIPE_WAIT 0x00000000
+#define PIPE_NOWAIT 0x00000001
+#define PIPE_READMODE_BYTE 0x00000000
+#define PIPE_READMODE_MESSAGE 0x00000002
+#define PIPE_TYPE_BYTE 0x00000000
+#define PIPE_TYPE_MESSAGE 0x00000004
+#define PIPE_ACCEPT_REMOTE_CLIENTS 0x00000000
+#define PIPE_REJECT_REMOTE_CLIENTS 0x00000008
+
+#define PIPE_ACCESS_INBOUND 0x00000001
+#define PIPE_ACCESS_OUTBOUND 0x00000002
+#define PIPE_ACCESS_DUPLEX 0x00000003
+
+#define PIPE_UNLIMITED_INSTANCES 255
+#define ERROR_PIPE_BUSY 231L
+
+HANDLE WINAPI CreateNamedPipeA(
+        LPCSTR lpName,
+        DWORD dwOpenMode,
+        DWORD dwPipeMode,
+        DWORD nMaxInstances,
+        DWORD nOutBufferSize,
+        DWORD nInBufferSize,
+        DWORD nDefaultTimeOut,
+        LPSECURITY_ATTRIBUTES lpSecurityAttributes);
+HANDLE WINAPI CreateNamedPipeW(
+        LPCWSTR lpName,
+        DWORD dwOpenMode,
+        DWORD dwPipeMode,
+        DWORD nMaxInstances,
+        DWORD nOutBufferSize,
+        DWORD nInBufferSize,
+        DWORD nDefaultTimeOut,
+        LPSECURITY_ATTRIBUTES lpSecurityAttributes);
 BOOL WINAPI CreatePipe(
         PHANDLE hReadPipe,
         PHANDLE hWritePipe,
         LPSECURITY_ATTRIBUTES lpPipeAttributes,
         DWORD nSize);
+BOOL WINAPI ConnectNamedPipe(HANDLE hNamedPipe, LPOVERLAPPED lpOverlapped);
 BOOL WINAPI PeekNamedPipe(
         HANDLE  hNamedPipe,
         LPVOID  lpBuffer,
@@ -2590,6 +2978,8 @@ BOOL WINAPI PeekNamedPipe(
         LPDWORD lpBytesRead,
         LPDWORD lpTotalBytesAvail,
         LPDWORD lpBytesLeftThisMessage);
+BOOL WINAPI WaitNamedPipeA(LPCSTR lpNamedPipeName, DWORD nTimeOut);
+BOOL WINAPI WaitNamedPipeW(LPCWSTR lpNamedPipeName, DWORD nTimeOut);
 
 /* ========================================================================== */
 /* Path Functions: */
@@ -2755,6 +3145,10 @@ unsigned char _BitScanForward64(unsigned long * Index, unsigned __int64 Mask);
 
 
 /* ========================================================================== */
+/* Code Pages: */
+UINT WINAPI GetACP();
+
+/* ========================================================================== */
 /* UTF-16 <-> UTF-8 conversion Functions: */
 int WINAPI WideCharToMultiByte(
     UINT        CodePage,
@@ -2805,7 +3199,7 @@ void WINAPI GetSystemTimeAsFileTime(
         LPFILETIME lpSystemTimeAsFileTime);
 BOOL WINAPI SystemTimeToTzSpecificLocalTime(
         LPTIME_ZONE_INFORMATION lpTimeZone,
-        LPSYSTEMTIME lpUniversalTime,
+  const SYSTEMTIME * lpUniversalTime,
         LPSYSTEMTIME lpLocalTime);
 DWORD timeGetTime(void);
 
@@ -2831,6 +3225,8 @@ DWORD WINAPI GetEnvironmentVariableW(
 BOOL WINAPI DisableThreadLibraryCalls(
         HMODULE hModule);
 DWORD WINAPI GetLastError(void);
+VOID WINAPI SetLastError(
+        DWORD dwErrCode);
 void WINAPI Sleep(
         DWORD dwMilliseconds);
 DWORD WINAPI SleepEx(
@@ -2912,6 +3308,149 @@ BOOL WINAPI FreeLibrary(
 PVOID SecureZeroMemory(
         PVOID  ptr,
         SIZE_T cnt);
+
+VOID __stosb(
+        PBYTE  Destination,
+        BYTE  Value,
+        SIZE_T Count);
+
+VOID __stosw(
+        PWORD   Destination,
+        WORD   Value,
+        SIZE_T Count);
+
+VOID __stosd(
+        PDWORD Destination,
+        DWORD Value,
+        SIZE_T Count);
+
+VOID __stosq(
+        PDWORD64 Destination,
+        DWORD64 Value,
+        SIZE_T Count);
+
+#pragma intrinsic(__stosb)
+#pragma intrinsic(__stosw)
+#pragma intrinsic(__stosd)
+#pragma intrinsic(__stosq)
+
+FORCEINLINE PVOID SecureZeroMemory(
+        PVOID ptr,
+        SIZE_T cnt)
+{
+    volatile char* vptr = (volatile char*)ptr;
+
+#if defined(_M_AMD64)
+    __stosb((PBYTE)((DWORD64)vptr), 0, cnt);
+#else
+    while (cnt)
+    {
+#   if !defined(_M_CEE) && (defined(_M_ARM) || defined(_M_ARM64))
+        __iso_volatile_store8(vptr, 0);
+#   else
+        * vptr = 0;
+#   endif
+
+        vptr++;
+        cnt--;
+    }
+
+#endif // _M_AMD64
+
+    return ptr;
+}
+
+_NODISCARD _Check_return_
+int __cdecl memcmp(
+    _In_reads_bytes_(_Size) void const* _Buf1,
+    _In_reads_bytes_(_Size) void const* _Buf2,
+    _In_                    size_t      _Size
+);
+
+_CRT_INSECURE_DEPRECATE_MEMORY(memmove_s)
+_VCRTIMP void* __cdecl memmove(
+    _Out_writes_bytes_all_opt_(_Size) void* _Dst,
+    _In_reads_bytes_opt_(_Size)       void const* _Src,
+    _In_                              size_t      _Size
+);
+
+void* __cdecl memcpy(
+    _Out_writes_bytes_all_(_Size) void* _Dst,
+    _In_reads_bytes_(_Size)       void const* _Src,
+    _In_                          size_t      _Size
+);
+
+void* __cdecl memset(
+    _Out_writes_bytes_all_(_Size) void* _Dst,
+    _In_                          int    _Val,
+    _In_                          size_t _Size
+);
+
+
+#define RtlEqualMemory(Destination,Source,Length) (!memcmp((Destination),(Source),(Length)))
+#define RtlMoveMemory(Destination,Source,Length) memmove((Destination),(Source),(Length))
+#define RtlCopyMemory(Destination,Source,Length) memcpy((Destination),(Source),(Length))
+#define RtlFillMemory(Destination,Length,Fill) memset((Destination),(Fill),(Length))
+#define RtlZeroMemory(Destination,Length) memset((Destination),0,(Length))
+
+#define MoveMemory RtlMoveMemory
+#define CopyMemory RtlCopyMemory
+#define FillMemory RtlFillMemory
+#define ZeroMemory RtlZeroMemory
+
+UINT WINAPI GetDoubleClickTime(VOID);
+BOOL WINAPI SetDoubleClickTime(UINT);
+
+
+/* ========================================================================== */
+/* Locales: */
+#define LOCALE_NAME_INVARIANT               L""
+
+#define LCMAP_LOWERCASE                     0x00000100
+#define LCMAP_UPPERCASE						0x00000200
+
+typedef struct _nlsversioninfo {
+  DWORD dwNLSVersionInfoSize;
+  DWORD dwNLSVersion;
+  DWORD dwDefinedVersion;
+} NLSVERSIONINFO, *LPNLSVERSIONINFO;
+
+int WINAPI LCMapStringEx(
+  LPCWSTR          lpLocaleName,
+  DWORD            dwMapFlags,
+  LPCWSTR          lpSrcStr,
+  int              cchSrc,
+  LPWSTR           lpDestStr,
+  int              cchDest,
+  LPNLSVERSIONINFO lpVersionInformation,
+  LPVOID           lpReserved,
+  LPARAM           sortHandle
+);
+
+/* ========================================================================== */
+/* Resources: */
+DECLARE_HANDLE(HRSRC);
+typedef HANDLE HGLOBAL;
+
+HRSRC WINAPI FindResourceA(
+  HMODULE hModule,
+  LPCSTR  lpName,
+  LPCSTR  lpType
+);
+
+DWORD WINAPI SizeofResource(
+  HMODULE hModule,
+  HRSRC   hResInfo
+);
+
+HGLOBAL WINAPI LoadResource(
+  HMODULE hModule,
+  HRSRC   hResInfo
+);
+
+LPVOID WINAPI LockResource(
+  HGLOBAL hResData
+);
 
 #if defined(__cplusplus)
 }
@@ -3569,6 +4108,13 @@ BOOL WINAPI GetComputerNameW(
         LPWSTR  lpBuffer,
         LPDWORD lpnSize);
 
+BOOL WINAPI GetUserNameA(
+		LPSTR lpBuffer,
+		LPDWORD pcbBuffer);
+BOOL WINAPI GetUserNameW(
+		LPWSTR lpBuffer,
+		LPDWORD pcbBuffer);
+
 /* Version: */
 BOOL WINAPI VerifyVersionInfoA(
         LPOSVERSIONINFOEXA lpVersionInfo,
@@ -4020,6 +4566,9 @@ BOOL WINAPI SetProcessAffinityMask(
         HANDLE    hProcess,
         DWORD_PTR dwProcessAffinityMask);
 BOOL WINAPI SwitchToThread(void);
+HRESULT WINAPI SetThreadDescription(
+        HANDLE hThread,
+        PCWSTR lpThreadDescription);
 
 /* ========================================================================== */
 /* CriticalSection Functions: */
@@ -4280,9 +4829,10 @@ extern "C" {
 #define CW_USEDEFAULT               ((int)0x80000000)
 
 /* Class Styles: */
-#define CS_OWNDC                        0x0020
 #define CS_VREDRAW                      0x0001
 #define CS_HREDRAW                      0x0002
+#define CS_OWNDC                        0x0020
+#define CS_CLASSDC                      0x0040
 
 /* Messages: */
 #define PM_NOREMOVE                 0x0000
@@ -4309,6 +4859,7 @@ extern "C" {
 #define WM_SHOWWINDOW               0x0018
 #define WM_WININICHANGE             0x001A
 #define WM_NCDESTROY                0x0082
+#define WM_INPUT                    0x00FF
 
 #define WM_KEYDOWN                  0x0100
 #define WM_KEYUP                    0x0101
@@ -4317,8 +4868,12 @@ extern "C" {
 
 #define WM_SYSCOMMAND               0x0112
 
+#define WM_MOUSEMOVE                0x0200
+
 #define WM_ENTERSIZEMOVE            0x0231
 #define WM_EXITSIZEMOVE             0x0232
+
+#define WM_DPICHANGED               0x02E0
 
 #define WM_ACTIVATE                 0x0006
 #define WA_INACTIVE                 0
@@ -4362,6 +4917,31 @@ extern "C" {
 #define VK_RWIN                         0x5C
 #define VK_PROCESSKEY                   0xE5
 
+// Show window commands
+#define SW_HIDE             0
+#define SW_SHOWNORMAL       1
+#define SW_NORMAL           1
+#define SW_SHOWMINIMIZED    2
+#define SW_SHOWMAXIMIZED    3
+#define SW_MAXIMIZE         3
+#define SW_SHOWNOACTIVATE   4
+#define SW_SHOW             5
+#define SW_MINIMIZE         6
+#define SW_SHOWMINNOACTIVE  7
+#define SW_SHOWNA           8
+#define SW_RESTORE          9
+#define SW_SHOWDEFAULT      10
+#define SW_FORCEMINIMIZE    11
+#define SW_MAX              11
+
+/* Get/SetWindowLong Indices: */
+
+#define GWLP_WNDPROC        -4
+#define GWLP_HINSTANCE      -6
+#define GWLP_HWNDPARENT     -8
+#define GWL_STYLE           -16
+#define GWLP_USERDATA       -21
+#define GWLP_ID             -12
 
 /* ========================================================================== */
 /* Structures:                                                                */
@@ -4386,6 +4966,34 @@ typedef struct tagWNDCLASS {
     LPCTSTR     lpszMenuName;
     LPCTSTR     lpszClassName;
 } WNDCLASS, *PWNDCLASS;
+typedef struct tagWNDCLASSEXA {
+    UINT        cbSize;
+    UINT        style;
+    WNDPROC     lpfnWndProc;
+    int         cbClsExtra;
+    int         cbWndExtra;
+    HINSTANCE   hInstance;
+    HICON       hIcon;
+    HCURSOR     hCursor;
+    HBRUSH      hbrBackground;
+    LPCSTR      lpszMenuName;
+    LPCSTR      lpszClassName;
+    HICON       hIconSm;
+} WNDCLASSEXA, *PWNDCLASSEXA, *NPWNDCLASSEXA, *LPWNDCLASSEXA;
+typedef struct tagWNDCLASSEXW {
+    UINT        cbSize;
+    UINT        style;
+    WNDPROC     lpfnWndProc;
+    int         cbClsExtra;
+    int         cbWndExtra;
+    HINSTANCE   hInstance;
+    HICON       hIcon;
+    HCURSOR     hCursor;
+    HBRUSH      hbrBackground;
+    LPCWSTR     lpszMenuName;
+    LPCWSTR     lpszClassName;
+    HICON       hIconSm;
+} WNDCLASSEXW, *PWNDCLASSEXW, *NPWNDCLASSEXW, *LPWNDCLASSEXW;
 
 /* Messages: */
 typedef struct tagPOINT {
@@ -4419,6 +5027,10 @@ ATOM WINAPI RegisterClassA(
         WNDCLASS *lpWndClass);
 ATOM WINAPI RegisterClassW(
         WNDCLASS *lpWndClass);
+ATOM WINAPI RegisterClassExA(
+        const WNDCLASSEXA *unnamedParam1);
+ATOM WINAPI RegisterClassExW(
+        const WNDCLASSEXW *unnamedParam1);
 BOOL WINAPI UnregisterClassA(
         LPCSTR  lpClassName,
         HINSTANCE hInstance);
@@ -4476,8 +5088,47 @@ BOOL WINAPI AdjustWindowRectEx(
 BOOL WINAPI GetClientRect(
         HWND    hWnd,
         LPRECT  lpRect);
+BOOL WINAPI GetWindowRect(
+            HWND    hWnd,
+            LPRECT  lpRect);
 int WINAPI GetSystemMetrics(
         int     nIndex);
+BOOL WINAPI SetWindowPos(
+        HWND    hWnd,
+        HWND    hWndInsertAfter,
+        int     X,
+        int     Y,
+        int     cx,
+        int     cy,
+        UINT    uFlags);
+LONG WINAPI GetWindowLongA(
+        HWND hWnd,
+        int nIndex);
+LONG WINAPI GetWindowLongW(
+        HWND hWnd,
+        int nIndex);
+LONG WINAPI SetWindowLongA(
+        HWND hWnd,
+        int nIndex,
+        LONG dwNewLong);
+LONG WINAPI SetWindowLongW(
+        HWND hWnd,
+        int nIndex,
+        LONG dwNewLong);
+LONG_PTR WINAPI GetWindowLongPtrA(
+        HWND hWnd,
+        int nIndex);
+LONG_PTR WINAPI GetWindowLongPtrW(
+        HWND hWnd,
+        int nIndex);
+LONG_PTR WINAPI SetWindowLongPtrA(
+        HWND hWnd,
+        int nIndex,
+        LONG_PTR dwNewLong);
+LONG_PTR WINAPI SetWindowLongPtrW(
+        HWND hWnd,
+        int nIndex,
+        LONG_PTR dwNewLong);
 
 /* ========================================================================== */
 /* Message Queue: */
@@ -4529,6 +5180,12 @@ BOOL WINAPI SetEvent(
 SHORT WINAPI GetKeyState(
         int     nVirtKey);
 
+/* ========================================================================== */
+/* Cursor Functions: */
+BOOL WINAPI ClipCursor(
+        const RECT *lpRect);
+int WINAPI ShowCursor(
+        BOOL bShow);
 #if defined(__cplusplus)
 }
 #endif
@@ -4689,6 +5346,160 @@ BOOL WINAPI FlsFree(DWORD dwFlsIndex);
 #endif /* _WINDOWS_ */
 
 
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Copyright (c) Arvid Gerstmann. All rights reserved.
+ */
+#ifndef _WINDOWS_
+#ifndef WINDOWS_RAWINPUT_H
+#define WINDOWS_RAWINPUT_H
+
+/* Disable all warnings */
+#if defined(_MSC_VER)
+    #pragma warning(push, 0)
+#endif
+
+#ifndef WINDOWS_BASE_H
+#include "windows_base.h"
+#endif
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+/* RAWINPUTDEVICE.usUsagePage */
+#define HID_USAGE_PAGE_GENERIC      0x01
+
+/* RAWINPUTDEVICE.usUsage */
+#define HID_USAGE_GENERIC_MOUSE     0x02
+#define HID_USAGE_GENERIC_KEYBOARD  0x06
+
+/* GetRawInputData command flags */
+#define RID_INPUT   0x10000003
+#define RID_HEADER  0x10000005
+
+/* RAWINPUTHEADER.dwType */
+#define RIM_TYPEMOUSE       0
+#define RIM_TYPEKEYBOARD    1
+
+/* RAWKEYBOARD.MakeCode with invalid input */
+#define KEYBOARD_OVERRUN_MAKE_CODE 0xFF
+
+/* RAWKEYBOARD.Flags */
+#define RI_KEY_MAKE     0
+#define RI_KEY_BREAK    1
+#define RI_KEY_E0       2
+#define RI_KEY_E1       4
+
+/* RAWMOUSE.Flags */
+#define MOUSE_MOVE_RELATIVE     0
+#define MOUSE_MOVE_ABSOLUTE     1
+#define MOUSE_VIRTUAL_DESKTOP   2 // the coordinates are mapped to the virtual desktop
+
+/* RAWMOUSE.usButtonFlags */
+#define RI_MOUSE_LEFT_BUTTON_DOWN   0x0001
+#define RI_MOUSE_LEFT_BUTTON_UP     0x0002
+#define RI_MOUSE_RIGHT_BUTTON_DOWN  0x0004
+#define RI_MOUSE_RIGHT_BUTTON_UP    0x0008
+#define RI_MOUSE_MIDDLE_BUTTON_DOWN 0x0010
+#define RI_MOUSE_MIDDLE_BUTTON_UP   0x0020
+
+#define RI_MOUSE_BUTTON_1_DOWN      RI_MOUSE_LEFT_BUTTON_DOWN
+#define RI_MOUSE_BUTTON_1_UP        RI_MOUSE_LEFT_BUTTON_UP
+#define RI_MOUSE_BUTTON_2_DOWN      RI_MOUSE_RIGHT_BUTTON_DOWN
+#define RI_MOUSE_BUTTON_2_UP        RI_MOUSE_RIGHT_BUTTON_UP
+#define RI_MOUSE_BUTTON_3_DOWN      RI_MOUSE_MIDDLE_BUTTON_DOWN
+#define RI_MOUSE_BUTTON_3_UP        RI_MOUSE_MIDDLE_BUTTON_UP
+
+#define RI_MOUSE_BUTTON_4_DOWN      0x0040
+#define RI_MOUSE_BUTTON_4_UP        0x0080
+#define RI_MOUSE_BUTTON_5_DOWN      0x0100
+#define RI_MOUSE_BUTTON_5_UP        0x0200
+
+#define RI_MOUSE_WHEEL              0x0400
+#define RI_MOUSE_HWHEEL             0x0800
+
+#define WHEEL_DELTA 120
+
+typedef HANDLE HRAWINPUT;
+
+typedef struct tagRAWINPUTDEVICE {
+    USHORT usUsagePage;
+    USHORT usUsage;
+    DWORD dwFlags;
+    HWND hwndTarget;
+} RAWINPUTDEVICE, *PRAWINPUTDEVICE, *LPRAWINPUTDEVICE;
+
+typedef struct tagRAWINPUTHEADER {
+    DWORD dwType;
+    DWORD dwSize;
+    HANDLE hDevice;
+    WPARAM wParam;
+} RAWINPUTHEADER, *PRAWINPUTHEADER, *LPRAWINPUTHEADER;
+
+typedef struct tagRAWMOUSE {
+    USHORT usFlags;
+
+    union {
+        ULONG ulButtons;
+        struct  {
+            USHORT  usButtonFlags;
+            USHORT  usButtonData;
+        };
+    };
+
+    ULONG ulRawButtons;
+    LONG lLastX;
+    LONG lLastY;
+    ULONG ulExtraInformation;
+} RAWMOUSE, *PRAWMOUSE, *LPRAWMOUSE;
+
+typedef struct tagRAWKEYBOARD {
+    USHORT MakeCode;
+    USHORT Flags;
+    USHORT Reserved;
+    USHORT VKey;
+    UINT   Message;
+    ULONG ExtraInformation;
+} RAWKEYBOARD, *PRAWKEYBOARD, *LPRAWKEYBOARD;
+
+typedef struct tagRAWHID {
+    DWORD dwSizeHid;
+    DWORD dwCount;
+    BYTE bRawData[1];
+} RAWHID, *PRAWHID, *LPRAWHID;
+
+typedef struct tagRAWINPUT {
+    RAWINPUTHEADER header;
+    union {
+        RAWMOUSE    mouse;
+        RAWKEYBOARD keyboard;
+        RAWHID      hid;
+    } data;
+} RAWINPUT, *PRAWINPUT, *LPRAWINPUT;
+
+BOOL WINAPI RegisterRawInputDevices(
+        const RAWINPUTDEVICE* pRawInputDevices,
+        UINT uiNumDevices,
+        UINT cbSize);
+
+UINT WINAPI GetRawInputData(
+        HRAWINPUT hRawInput,
+        UINT uiCommand,
+        LPVOID pData,
+        UINT* pcbSize,
+        UINT cbSizeHeader);
+
+#if defined(__cplusplus)
+}
+#endif
+
+/* Enable all warnings */
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+
+#endif /* WINDOWS_RAWINPUT_H */
+#endif /* _WINDOWS_ */
 #endif
 #endif
 #define _WINDOWS_

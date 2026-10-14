@@ -3,8 +3,8 @@
  * Copyright (c) Arvid Gerstmann. All rights reserved.
  */
 #ifndef _WINDOWS_
-#ifndef WINDOWS_ATOMIC_H
-#define WINDOWS_ATOMIC_H
+#ifndef WINDOWS_RAWINPUT_H
+#define WINDOWS_RAWINPUT_H
 
 /* Disable all warnings */
 #if defined(_MSC_VER)
@@ -150,5 +150,5 @@ UINT WINAPI GetRawInputData(
 #pragma warning(pop)
 #endif
 
-#endif /* WINDOWS_ATOMIC_H */
+#endif /* WINDOWS_RAWINPUT_H */
 #endif /* _WINDOWS_ */
